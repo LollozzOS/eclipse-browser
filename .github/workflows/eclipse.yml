@@ -1,8 +1,11 @@
 # Eclipse by LollozzOS - ogni giorno controlla se e' uscito un Ungoogled Chromium nuovo; se si', fa il rebrand
 # e pubblica il pacchetto qui tra le "Releases" (da li' i PC con Eclipse si aggiornano da soli).
-# Si puo' lanciare anche a mano (Actions > Eclipse - nuova versione > Run workflow), es. dopo una modifica a Scudo.
+# Parte anche da sola quando si cambia il codice di Eclipse (push), o a mano: Actions > Eclipse - nuova versione > Run workflow.
 name: Eclipse - nuova versione
 on:
+  push:
+    branches: [main]
+    paths: ['eclipse_src/**', 'scudo/**', 'costruisci/**', 'pacchetto/**', 'marchio/**', '.github/workflows/**']
   schedule:
     - cron: '17 5 * * *'
   workflow_dispatch:
@@ -33,7 +36,7 @@ jobs:
           ULT=$(curl -fsSL "https://github.com/$PUBBLICO/releases/latest/download/versione.json" 2>/dev/null | jq -r .ungoogled || true)
           echo "Ungoogled: $TAG  -  ultima Eclipse pubblicata: ${ULT:-nessuna}"
           FARE=no
-          if [ "$TAG" != "$ULT" ] || [ "${{ inputs.forza }}" = "true" ]; then FARE=si; fi
+          if [ "$TAG" != "$ULT" ] || [ "${{ inputs.forza }}" = "true" ] || [ "${{ github.event_name }}" = "push" ]; then FARE=si; fi
           [ "$URL" != "null" ] || { echo "nessun installer x64 nell'ultima versione di Ungoogled"; exit 1; }
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"; echo "url=$URL" >> "$GITHUB_OUTPUT"; echo "fare=$FARE" >> "$GITHUB_OUTPUT"
       - name: Strumenti
