@@ -1,0 +1,62 @@
+# Eclipse by LollozzOS - ogni giorno controlla se e' uscito un Ungoogled Chromium nuovo; se si', fa il rebrand
+# e pubblica il pacchetto qui tra le "Releases" (da li' i PC con Eclipse si aggiornano da soli).
+# Si puo' lanciare anche a mano (Actions > Eclipse - nuova versione > Run workflow), es. dopo una modifica a Scudo.
+name: Eclipse - nuova versione
+on:
+  schedule:
+    - cron: '17 5 * * *'
+  workflow_dispatch:
+    inputs:
+      forza:
+        description: 'Pubblica anche se Ungoogled non e'' cambiato (es. modifiche a Scudo o alla nuova scheda)'
+        type: boolean
+        default: false
+concurrency: eclipse
+permissions:
+  contents: write
+jobs:
+  costruisci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      PUBBLICO: ${{ github.repository }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cosa c'e' di nuovo
+        id: v
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          U=$(curl -fsSL https://api.github.com/repos/ungoogled-software/ungoogled-chromium-windows/releases/latest)
+          TAG=$(echo "$U" | jq -r .tag_name)
+          URL=$(echo "$U" | jq -r '[.assets[] | select(.name | test("installer_x64\\.exe$"))][0].browser_download_url')
+          ULT=$(curl -fsSL "https://github.com/$PUBBLICO/releases/latest/download/versione.json" 2>/dev/null | jq -r .ungoogled || true)
+          echo "Ungoogled: $TAG  -  ultima Eclipse pubblicata: ${ULT:-nessuna}"
+          FARE=no
+          if [ "$TAG" != "$ULT" ] || [ "${{ inputs.forza }}" = "true" ]; then FARE=si; fi
+          [ "$URL" != "null" ] || { echo "nessun installer x64 nell'ultima versione di Ungoogled"; exit 1; }
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"; echo "url=$URL" >> "$GITHUB_OUTPUT"; echo "fare=$FARE" >> "$GITHUB_OUTPUT"
+      - name: Strumenti
+        if: steps.v.outputs.fare == 'si'
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq p7zip-full binutils zip jq >/dev/null
+          pip install -q brotli pillow
+      - name: Rebrand e pacchetto
+        if: steps.v.outputs.fare == 'si'
+        run: |
+          curl -fsSL "${{ steps.v.outputs.url }}" -o ungoogled.exe
+          bash costruisci/costruisci.sh ungoogled.exe "${{ github.run_number }}" "${{ steps.v.outputs.tag }}"
+      - name: Etichetta
+        if: steps.v.outputs.fare == 'si'
+        run: |
+          V=$(jq -r .versione uscita/versione.json)
+          jq --arg t "v$V" '.tag = $t' uscita/versione.json > uscita/v.json && mv uscita/v.json uscita/versione.json
+          echo "V=$V" >> "$GITHUB_ENV"
+      - name: Pubblica
+        if: steps.v.outputs.fare == 'si'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "v$V" --repo "$PUBBLICO" --title "Eclipse $V" \
+            --notes "Eclipse by LollozzOS $V - basato su Ungoogled Chromium ${{ steps.v.outputs.tag }} (Chromium, The Chromium Authors, licenza BSD). Aggiornamento automatico." \
+            uscita/*.zip uscita/versione.json

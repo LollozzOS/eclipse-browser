@@ -1,0 +1,60 @@
+{
+  "manifest_version": 3,
+  "name": "Eclipse Scudo",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArIYg+x5S90yc2xxR4WOUmbm09qS9+jBZa1z22EHjNLy4BJICeZrVG1owSx6SLNy0SbStxTaPbwtmpysFjYzrXUpGVqNQFMgj7UYZEC/POpdNIQ18FbBxR2e9kGleejAzFO8KkAvPB49p/b5TCsKT00s7hLbkSZCbEjM6CtT2n2MQJgoRsjBW/TY38xmonFrACFfXSpmd3JBVKUiJeLsnXBQDklMBJgWoyBkoSSkN0VZbixfT+pdO0rKc1fgarkxmHy6UHUWMUHuz/fNI6cuo3uho4yU9xcLQxBerHlGUwJMdV5vMba0pX/P3IyFrq2xu2Y6ISqvWLu0oaI+Eqj93FQIDAQAB",
+  "description": "Blocca pubblicità e traccianti, anche su YouTube e Twitch. Di LollozzOS.",
+  "version": "1.1.0",
+  "icons": {
+    "16": "icon16.png",
+    "32": "icon32.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "permissions": [
+    "declarativeNetRequest",
+    "declarativeNetRequestFeedback",
+    "storage",
+    "unlimitedStorage",
+    "scripting",
+    "alarms",
+    "tabs"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "sfondo.js"
+  },
+  "action": {
+    "default_title": "Eclipse Scudo",
+    "default_popup": "finestra.html",
+    "default_icon": {
+      "16": "icon16.png",
+      "32": "icon32.png"
+    }
+  },
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "pubblicita",
+        "enabled": true,
+        "path": "regole/pubblicita.json"
+      },
+      {
+        "id": "traccianti",
+        "enabled": true,
+        "path": "regole/traccianti.json"
+      },
+      {
+        "id": "eccezioni",
+        "enabled": true,
+        "path": "regole/eccezioni.json"
+      },
+      {
+        "id": "cookie",
+        "enabled": true,
+        "path": "regole/cookie.json"
+      }
+    ]
+  }
+}

@@ -1,0 +1,90 @@
+﻿ECLIPSE BY LOLLOZZOS - PROTOTIPO (versione 157.0.8103.38, da Ungoogled Chromium)
+================================================================================
+
+COSA C'E' DENTRO
+  - Il browser con nome "Eclipse", l'icona B (luna che passa) e la scritta Eclipse in tutti i menu
+    (italiano e inglese; le altre lingue sono tolte). Gli autori di Chromium restano nei crediti.
+  - Nuova scheda Eclipse, pagina di benvenuto con l'importazione da Chrome, pulsante "Libera RAM".
+  - Tema del browser nel colore di LollozzOS (lo prende da quello scelto nella finestra del tema).
+  - Impostazioni leggere di serie: schede in pausa nella misura massima, niente pre-caricamento,
+    niente attivita' in background, niente Chromecast, notifiche bloccate (si permettono a mano),
+    protezione dell'IP (WebRTC), niente salvataggio delle carte di pagamento.
+    Dal 10/11: massimo 8 processi per le pagine, niente memoria delle pagine per il tasto Indietro
+    (Indietro ricarica la pagina), controllo ortografico spento (profili nuovi).
+    Il browser a priorita' bassa durante i giochi lo fa gia' la Modalita' competitiva del Toolbox.
+  - ECLIPSE SCUDO (novita'): il nostro blocco pubblicita' e traccianti. Icona scudo in alto con il
+    numero di cose bloccate; clic = finestrella con l'interruttore "spento su questo sito".
+    YouTube: toglie gli annunci prima che parta il video, se ne scappa uno lo salta da solo.
+    Twitch: durante la pubblicita' passa a una versione del live senza annunci (qualita' piu' bassa
+    per quei secondi), poi torna normale. Liste EasyList/EasyPrivacy, si aggiornano da sole ogni 4 giorni.
+  - Google come motore di ricerca: primo passo del benvenuto, pulsante "Usa Google" (si sceglie
+    Google una volta e resta). Windows non permette di imporlo da fuori sui PC non aziendali.
+  - Preferiti: l'installazione li porta dal vecchio browser (Chrome anche quando sono salvati
+    sull'account Google, Edge, Brave, Opera, Vivaldi), solo se Eclipse non ne ha gia'. Per farlo
+    di nuovo: PORTA-PREFERITI.bat. Firefox: dal benvenuto, pulsante Importa.
+  - Il pezzo per lo store di Chrome: lo scarica l'installazione dal sito ufficiale (GitHub).
+    Se non riesce, Eclipse funziona lo stesso e te lo scrive.
+
+PROVA SUL TUO PC (non su un cliente)
+  1) Doppio clic su INSTALLA-ECLIPSE.bat (chiede l'amministratore).
+     Va in C:\Program Files\Eclipse, collegamento "Eclipse" sul desktop e in Start, voce in
+     App installate. Chrome e i tuoi dati di Chrome NON vengono toccati.
+  2) Apri Eclipse dal collegamento sul desktop: alla prima apertura c'e' il benvenuto.
+     Prova: "Importa da Chrome", la nuova scheda, il pulsante Eclipse in alto (Libera RAM),
+     Gmail / YouTube / Accedi con Google, un'estensione dallo store di Chrome.
+     Scudo: scrivi una parola nella barra (deve cercare su Google), apri un sito pieno di
+     pubblicita' (es. un sito meteo), un video YouTube, un live Twitch: dimmi cosa vedi.
+     Se c'era gia' la prima prova: le scorciatoie della nuova scheda ripartono da zero (una volta)
+     e il benvenuto esce un'ultima volta, poi non piu'.
+  3) Prova RAM: chiudi Chrome ed Eclipse, doppio clic su PROVA-RAM-CHROME-CONTRO-ECLIPSE.bat
+     e non usare il PC per circa 25 minuti. Apre i due browser con profili NUOVI e le stesse
+     10 schede, misura RAM e CPU dopo 1 minuto e dopo 10 minuti, e salva Prova-Eclipse.txt
+     sul desktop. Mandami quel file.
+  Per togliere tutto: App installate > Eclipse by LollozzOS > Disinstalla.
+
+NOVITA' (10/11 sera) - idee prese da Helium, Brave e Firefox
+  - Nuova scheda: pulsante "Personalizza" in basso a destra (sfondo Eclipse, tinta unita, 4 sfondi
+    LollozzOS o una tua foto; orologio; logo si/no; scorciatoie "!").
+  - Scorciatoie "!" nella casella della nuova scheda: "!yt gatti" (YouTube), "!a" (Amazon), "!w"
+    (Wikipedia), "!m" (Maps), "!tr" (Traduttore), "!eb" (eBay), "!sub" (Subito), "!gpt", "!cl"...
+    Dalla barra in alto funzionano solo se il motore scelto le capisce (Brave Search si', Google no).
+  - Benvenuto con "Le tue scelte": cookie che ti seguono tra i siti bloccati, finestre "Accetta i
+    cookie" tolte, scorciatoie "!" (tutto acceso di serie, si cambia li').
+  - Scudo piu' forte: in piu' le liste di uBlock Origin (pubblicita' e traccianti) e AdGuard per le
+    finestre dei cookie (interruttore anche nella finestrella di Scudo).
+  - Netflix / Spotify / Prime Video: l'installazione scarica il componente Widevine dal server di
+    Google. NON provato (da qui non si raggiunge Google): guarda cosa scrive l'installazione.
+    Netflix sui browser non ufficiali a volte rifiuta lo stesso o da' qualita' ridotta.
+  - Lettura facile (gia' dentro il browser): tasto destro sulla pagina > modalita' di lettura.
+  - Due schede affiancate (gia' dentro il browser, acceso di serie): tasto destro su una scheda >
+    visualizzazione divisa. Da provare: non so se in questa versione compare.
+
+PIU' LEGGERO (10/11 sera)
+  - Eclipse e Scudo sono ora UNA sola estensione: un processo in meno sempre acceso. Un solo pulsante
+    in alto (Scudo + Libera RAM). Le impostazioni di Scudo (siti spenti) ripartono da zero una volta.
+  - Niente processo "di riserva" sempre acceso (il primo sito in una scheda nuova parte un attimo dopo).
+  - Spente le funzioni AI di Chrome (Gemini, Lens, organizza schede, aiutami a scrivere, modelli AI
+    scaricati) e le API pubblicitarie del "Privacy Sandbox".
+  - Tolti 3 file inutili: chrome_wer.dll (segnalazione errori a Windows), notification_helper.exe
+    (notifiche a browser chiuso), chrome_pwa_launcher.exe (app web che aprono file). Solo spazio disco.
+    NON tolti (studiati, servono): i file della grafica (dxcompiler, d3dcompiler, vk_swiftshader,
+    vulkan-1: WebGPU e pagine 3D sui PC con driver vecchi), chrome_proxy.exe (app web installate),
+    lingue con genere (it/en *_FEMININE ecc.), i 200% per gli schermi con ridimensionamento alto.
+
+COSA NON C'E' ANCORA (da fare dopo i test)
+  - Eclipse come browser predefinito di Windows (i link da Discord, mail ecc. aprono ancora
+    l'altro browser).
+  - L'icona del programma che cambia colore col tema: per ora e' viola. Le pagine e le barre
+    invece cambiano gia' col colore (per cambiarlo: script\Tema-Eclipse.ps1 -Hex RRGGBB).
+  - Aggiornamenti dal Toolbox e installazione dal playbook.
+  - Modalita' gioco.
+
+DA SAPERE
+  - E' un prototipo: l'ho provato per quello che si puo' su un PC Linux (pagine nuove, tema,
+    estensione), non su Windows. Il pulsante "Libera RAM" va provato sul tuo PC.
+  - Scudo non e' perfetto: YouTube e Twitch cambiano spesso, quando succede va corretto e si
+    aggiorna con una nuova versione di Eclipse. Su YouTube a volte puo' comparire l'avviso dei
+    blocchi annunci (Scudo prova a toglierlo e far ripartire il video).
+  - Windows SmartScreen o l'antivirus possono dire "editore sconosciuto": i file non sono firmati
+    (come le versioni di Ungoogled Chromium).
+  - Eclipse usa una cartella dati sua: %LOCALAPPDATA%\Eclipse (non quella di Chrome/Chromium).

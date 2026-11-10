@@ -1,0 +1,5 @@
+:root{--fg:#F1EDFA;--dim:#a9a6b8;--pan:#14121c;--bordo:#2a2638}
+*{box-sizing:border-box}html,body{margin:0;height:100%;font-family:"Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;color:var(--fg);background:#0a0912}
+a{color:inherit}
+.pri{background:var(--acc);color:var(--su-acc);border:0;border-radius:10px;padding:10px 18px;font:600 13.5px inherit;font-family:inherit;cursor:pointer}
+.sec{background:transparent;color:#cfcbe0;border:1px solid #3a3550;border-radius:10px;padding:10px 18px;font-size:13.5px;font-family:inherit;cursor:pointer}

@@ -1,0 +1,46 @@
+{
+  "distribution": {
+    "import_bookmarks": true,
+    "import_history": true,
+    "import_home_page": false,
+    "import_search_engine": false,
+    "do_not_create_any_shortcuts": true,
+    "do_not_launch_chrome": true,
+    "do_not_register_for_update_launch": true,
+    "make_chrome_default_for_user": false
+  },
+  "browser": {
+    "check_default_browser": false,
+    "enable_spellchecking": false
+  },
+  "background_mode": {
+    "enabled": false
+  },
+  "net": {
+    "network_prediction_options": 2
+  },
+  "profile": {
+    "default_content_setting_values": {
+      "notifications": 2
+    }
+  },
+  "webrtc": {
+    "ip_handling_policy": "disable_non_proxied_udp"
+  },
+  "media_router": {
+    "enable_media_router": false
+  },
+  "autofill": {
+    "credit_card_enabled": false
+  },
+  "extensions": {
+    "settings": {
+      "doeokiglaacbfegkolekpjimdbacepgi": {
+        "ack_ntp_bubble": true
+      }
+    }
+  },
+  "bookmark_bar": {
+    "show_on_all_tabs": true
+  }
+}

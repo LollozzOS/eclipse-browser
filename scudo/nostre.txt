@@ -1,0 +1,34 @@
+! Eclipse Scudo - regole nostre (LollozzOS), stesso formato di EasyList
+! --- YouTube: riquadri pubblicitari nella pagina ---
+youtube.com##ytd-ad-slot-renderer
+youtube.com##ytd-rich-item-renderer:has(ytd-ad-slot-renderer)
+youtube.com##ytd-rich-section-renderer:has(ytd-ad-slot-renderer)
+youtube.com###player-ads
+youtube.com###masthead-ad
+youtube.com##ytd-banner-promo-renderer
+youtube.com##ytd-statement-banner-renderer
+youtube.com##ytd-in-feed-ad-layout-renderer
+youtube.com##ytd-promoted-sparkles-web-renderer
+youtube.com##ytd-promoted-video-renderer
+youtube.com##ytd-display-ad-renderer
+youtube.com##ytd-compact-promoted-video-renderer
+youtube.com##ytd-search-pyv-renderer
+youtube.com##ytd-merch-shelf-renderer
+youtube.com##ytd-engagement-panel-section-list-renderer[target-id="engagement-panel-ads"]
+youtube.com##ytd-reel-video-renderer:has(ytd-ad-slot-renderer)
+youtube.com##.ytp-ad-overlay-container
+youtube.com##.ytp-ad-image-overlay
+youtube.com##ytm-promoted-sparkles-web-renderer
+youtube.com##ytm-companion-ad-renderer
+youtube.com##ad-slot-renderer
+youtube.com##ytm-rich-item-renderer:has(ad-slot-renderer)
+! --- YouTube: traccianti degli annunci ---
+||youtube.com/pagead/
+||youtube.com/api/stats/ads
+||youtube.com/ptracking
+||youtube.com/get_midroll_
+! --- Twitch: riquadri pubblicitari intorno al video ---
+twitch.tv##.stream-display-ad__wrapper
+twitch.tv##[data-test-selector="sda-wrapper"]
+twitch.tv##[data-a-target="outstream-ax-overlay"]
+twitch.tv##[data-test-selector="ad-banner-default-id"]

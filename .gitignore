@@ -1,0 +1,10 @@
+_metadata/
+node_modules/
+__pycache__/
+/lavoro/
+/uscita/
+eclipse_src/core/scudo/
+scudo/regole/
+scudo/cosmetica.json
+scudo/cosmetica_cookie.json
+scudo/liste.json

@@ -1,0 +1,65 @@
+{
+  "manifest_version": 3,
+  "name": "Eclipse",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwzshkNePac9NzW9WSUntXELwvKRr/s95HQoUjCgzC999wXNAnSy66X+KTmx7uE/A/R+ApDmxcWCV5c7ZT5xUPtPuVG08LbZAC4G7wvzOP4hzW2KG/vIM/16CrMZuan1upKZWCUl53M+mLAvvnnsGlcTZOw/CISY0OmmMmtI+NlWLe+Hzh/ZqRNZtye4I/DqYnqHn7UexqSXLt7gQGOnwXYgvGZrHmQtTc4jDv/o7FgFGZJFiLq9cLrWLPrTtDc2Bfi+0NztPkr3WIN571HjxPXfKcTDguaVyj2RDxKPD9FXTCZDyKRCRDmF1rZ13DCiHDlHcEKyXtuqlry9R15arKwIDAQAB",
+  "description": "Nuova scheda, benvenuto, Libera RAM ed Eclipse Scudo di Eclipse by LollozzOS",
+  "version": "2.0.0",
+  "icons": {
+    "16": "icon16.png",
+    "32": "icon32.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "permissions": [
+    "tabs",
+    "storage",
+    "search",
+    "privacy",
+    "declarativeNetRequest",
+    "declarativeNetRequestFeedback",
+    "unlimitedStorage",
+    "scripting",
+    "alarms"
+  ],
+  "background": {
+    "service_worker": "sfondo.js"
+  },
+  "chrome_url_overrides": {
+    "newtab": "nuovascheda.html"
+  },
+  "action": {
+    "default_title": "Eclipse",
+    "default_popup": "pannello.html",
+    "default_icon": {
+      "16": "icon16.png",
+      "32": "icon32.png"
+    }
+  },
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "pubblicita",
+        "enabled": true,
+        "path": "scudo/regole/pubblicita.json"
+      },
+      {
+        "id": "traccianti",
+        "enabled": true,
+        "path": "scudo/regole/traccianti.json"
+      },
+      {
+        "id": "eccezioni",
+        "enabled": true,
+        "path": "scudo/regole/eccezioni.json"
+      },
+      {
+        "id": "cookie",
+        "enabled": true,
+        "path": "scudo/regole/cookie.json"
+      }
+    ]
+  }
+}
