@@ -38,7 +38,7 @@ try {
     $p = Join-Path $ex 'Eclipse by LollozzOS'
     if (-not (Test-Path (Join-Path $p 'Eclipse\chrome.exe'))) { throw 'pacchetto incompleto' }
     # ancora chiuso? (puo' essere stato aperto mentre scaricava)
-    if (@(Get-Process -Name chrome -ErrorAction SilentlyContinue | Where-Object { $_.Path -like "$dir\*" }).Count) { Diario 'Eclipse aperto durante lo scaricamento: riprovo piu' tardi'; exit 0 }
+    if (@(Get-Process -Name chrome -ErrorAction SilentlyContinue | Where-Object { $_.Path -like "$dir\*" }).Count) { Diario "Eclipse aperto durante lo scaricamento: riprovo piu' tardi"; exit 0 }
     # il programma: cartelle delle versioni vecchie via, nuova dentro
     $nuova = (Get-ChildItem -LiteralPath (Join-Path $p 'Eclipse') -Directory | Where-Object { $_.Name -match '^\d+\.\d+\.\d+\.\d+$' } | Select-Object -First 1).Name
     & robocopy.exe (Join-Path $p 'Eclipse') $dir /E /NFL /NDL /NJH /NJS /NP /R:2 /W:2 | Out-Null
