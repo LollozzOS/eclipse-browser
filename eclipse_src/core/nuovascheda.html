@@ -28,6 +28,12 @@ input#q:focus{border-color:var(--acc-chiaro)}
 .riga{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid #221f30;font-size:13px}.riga div{flex:1}.riga small{display:block;color:var(--dim);font-size:11.5px;margin-top:2px}
 .int{width:40px;height:22px;border-radius:11px;background:#3a3550;position:relative;cursor:pointer;flex:none;border:0}
 .int::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .15s}.int.on{background:var(--acc)}.int.on::after{left:21px}
+/* (11/11) stile OLED: nero puro, viola molto scuro, icone con bordo viola sottile; Personalizza nascosto */
+html{background:#000!important}body{background:#000!important}
+#sf{background:radial-gradient(ellipse 55% 45% at 50% 30%,rgba(43,16,87,.55) 0%,rgba(20,8,40,.25) 45%,#000 80%)!important}
+.nm{color:#F1EDFA}.sub{color:#8C86A3}
+.g{border:1px solid #6B3FD9!important;background:#06040d!important}.g:hover{border-color:#9157FF!important}
+.pers{display:none!important}
 </style></head><body>
 <div id="sf"></div>
 <div id="orologio" style="display:none;text-align:center"><div class="ora" id="ora"></div><div class="data" id="data"></div></div>
