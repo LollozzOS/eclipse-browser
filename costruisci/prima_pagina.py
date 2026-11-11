@@ -1,6 +1,7 @@
 # Eclipse: la pagina "ungoogled-chromium first run" (chrome://ungoogled-first-run) e' scritta dentro chrome.dll.
 # Si sostituisce con una pagina di Eclipse (stesse dimensioni: il resto si riempie di spazi, niente si sposta).
-# I crediti a Chromium e a ungoogled-chromium restano. L'estensione Eclipse chiude comunque la scheda al primo avvio.
+# I crediti a Chromium e a ungoogled-chromium restano. Al primo avvio Eclipse trasforma subito questa scheda nel benvenuto:
+# per quell'istante la pagina e' solo lo sfondo scuro (il riquadro compare dopo 1,5 secondi, se uno la apre a mano).
 import sys
 f = sys.argv[1]
 b = bytearray(open(f, 'rb').read())
@@ -17,7 +18,8 @@ NUOVA = '''<title>Eclipse</title>
  @import url(chrome://resources/css/text_defaults_md.css);
  html{color:#F1EDFA;background:#0a0912;line-height:1.5}
  a{color:#b47fff}
- section{max-width:36em;margin:12vh auto;padding:2em 2.4em;border-radius:14px;background:#14121c;border:1px solid #2a2638}
+ section{max-width:36em;margin:12vh auto;padding:2em 2.4em;border-radius:14px;background:#14121c;border:1px solid #2a2638;animation:c .4s 1.5s both}
+ @keyframes c{from{opacity:0}to{opacity:1}}
  h1{font-size:1.6em;font-weight:600;margin:0 0 .4em}
  p{color:#a9a6b8;margin:.6em 0}
 </style>
