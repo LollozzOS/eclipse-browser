@@ -113,7 +113,7 @@ Riga ('Chrome sul PC: ' + $(if ($chrome) { (Get-Item $chrome).VersionInfo.Produc
 # ---------- 3) prova RAM ----------
 if (-not $SenzaProvaRam) {
     Titolo 'Prova RAM e CPU (3 minuti: non usare il PC)'
-    Get-Process chrome -ErrorAction SilentlyContinue | Where-Object { $_.Path -like "$script:ECLIPSE_DIR\*" } | Stop-Process -Force -ErrorAction SilentlyContinue
+    Eclipse-Processi | Stop-Process -Force -ErrorAction SilentlyContinue
     if ($chrome -and @(Get-Process chrome -ErrorAction SilentlyContinue | Where-Object { $_.Path -ieq $chrome }).Count) {
         Write-Host '  Chrome e'' aperto: chiudilo (aspetto fino a 2 minuti)...' -ForegroundColor Yellow
         for ($i = 0; $i -lt 60 -and @(Get-Process chrome -ErrorAction SilentlyContinue | Where-Object { $_.Path -ieq $chrome }).Count; $i++) { Start-Sleep 2 }

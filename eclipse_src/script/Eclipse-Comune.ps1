@@ -2,7 +2,8 @@
 #  Eclipse by LollozzOS - pezzi in comune tra installatore, tema e Toolbox
 # ============================================================================
 $script:ECLIPSE_DIR  = Join-Path $env:ProgramFiles 'Eclipse'
-$script:ECLIPSE_EXE  = Join-Path $script:ECLIPSE_DIR 'chrome.exe'
+# (11/11) il programma si chiama eclipse.exe (prima chrome.exe: il pacchetto li ha tutti e due finche' i PC non sono passati)
+$script:ECLIPSE_EXE  = Join-Path $script:ECLIPSE_DIR 'eclipse.exe'
 $script:ECLIPSE_DATI = Join-Path $env:LOCALAPPDATA 'Eclipse\User Data'
 $script:ECLIPSE_EST  = Join-Path $script:ECLIPSE_DIR 'Estensioni'
 $script:ECLIPSE_VIOLA = '6A00FF'
@@ -41,7 +42,45 @@ function Eclipse-ScriviTema([string]$Hex) {
             [IO.File]::WriteAllText($f, "window.ECLIPSE_COLORE = '#$h';`n", (New-Object System.Text.UTF8Encoding($false)))
         }
     }
+    try { [void](Eclipse-ColorePagine $h) } catch {}
     return $h
+}
+# (11/11) le pagine interne (Impostazioni, Cronologia, Download...) nel colore del tema: dentro resources.pak il
+# colore e' scritto come  #RRGGBB/*e*/  (lo mette costruisci/stile_pagine.py); qui si cambiano solo quei 6 caratteri,
+# senza spostare niente nel file. Con Eclipse aperto il file e' bloccato: ci riprova l'aggiornamento automatico.
+function Eclipse-ColoreAttuale {
+    $f = Join-Path $script:ECLIPSE_EST 'core\colore.js'
+    if (Test-Path -LiteralPath $f) { $m = [regex]::Match((Get-Content -LiteralPath $f -Raw), '#([0-9A-Fa-f]{6})'); if ($m.Success) { return $m.Groups[1].Value.ToUpper() } }
+    return (Eclipse-Colore '')
+}
+function Eclipse-ColorePagine([string]$Hex) {
+    $h = Eclipse-Colore $Hex
+    $esito = 'nessun file'
+    $l1 = [Text.Encoding]::GetEncoding(28591)
+    foreach ($pk in @(Get-ChildItem -LiteralPath $script:ECLIPSE_DIR -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -match '^\d+\.\d+\.\d+\.\d+$' } | ForEach-Object { Join-Path $_.FullName 'resources.pak' } | Where-Object { Test-Path -LiteralPath $_ })) {
+        $t = $l1.GetString([IO.File]::ReadAllBytes($pk))
+        $re = [regex]'#([0-9A-Fa-f]{6})/\*e\*/'
+        $tutti = $re.Matches($t)
+        if (-not $tutti.Count) { $esito = 'file senza segni del colore'; continue }
+        if (@($tutti | Where-Object { $_.Groups[1].Value.ToUpper() -ne $h }).Count -eq 0) { $esito = "gia' #$h"; continue }
+        $nuovo = $re.Replace($t, "#$h/*e*/")
+        $tmp = "$pk.nuovo"
+        [IO.File]::WriteAllBytes($tmp, $l1.GetBytes($nuovo))
+        try { Move-Item -LiteralPath $tmp -Destination $pk -Force -ErrorAction Stop; $esito = "#$h ($($tutti.Count) colori)" }
+        catch { Remove-Item -LiteralPath $tmp -Force -ErrorAction SilentlyContinue; $esito = 'Eclipse aperto: si applica alla prossima chiusura' }
+    }
+    return $esito
+}
+# i processi di Eclipse (eclipse.exe e, nelle versioni vecchie, chrome.exe) dalla sua cartella
+function Eclipse-Processi { @(Get-Process -ErrorAction SilentlyContinue | Where-Object { $_.Path -and $_.Path -like "$($script:ECLIPSE_DIR)\*" }) }
+# da chrome.exe a eclipse.exe: c'e' sempre eclipse.exe; chrome.exe si toglie quando collegamenti e registro puntano al nuovo
+function Eclipse-NomeNuovo {
+    $vecchio = Join-Path $script:ECLIPSE_DIR 'chrome.exe'
+    if (-not (Test-Path -LiteralPath $script:ECLIPSE_EXE) -and (Test-Path -LiteralPath $vecchio)) { Copy-Item -LiteralPath $vecchio -Destination $script:ECLIPSE_EXE -Force }
+}
+function Eclipse-TogliNomeVecchio {
+    $vecchio = Join-Path $script:ECLIPSE_DIR 'chrome.exe'
+    if ((Test-Path -LiteralPath $script:ECLIPSE_EXE) -and (Test-Path -LiteralPath $vecchio)) { Remove-Item -LiteralPath $vecchio -Force -ErrorAction SilentlyContinue }
 }
 # le estensioni caricate a ogni avvio (Eclipse con Scudo dentro, tema, store di Chrome)
 function Eclipse-Estensioni {

@@ -26,7 +26,7 @@ if (-not (Test-Path $script:ECLIPSE_EXE)) { throw 'Eclipse non e'' installato: l
 
 # RAM privata (in MB) e tempo di CPU di tutti i processi di quel browser
 function Misura([string]$exe) {
-    $pids = @(Get-CimInstance Win32_Process -Filter "Name='chrome.exe'" | Where-Object { $_.ExecutablePath -ieq $exe } | ForEach-Object { [int]$_.ProcessId })
+    $pids = @(Get-CimInstance Win32_Process -Filter "Name='chrome.exe' OR Name='eclipse.exe'" | Where-Object { $_.ExecutablePath -ieq $exe } | ForEach-Object { [int]$_.ProcessId })
     if (-not $pids.Count) { return $null }
     $perf = @(Get-CimInstance Win32_PerfRawData_PerfProc_Process | Where-Object { $pids -contains [int]$_.IDProcess })
     $ram = ($perf | Measure-Object -Property WorkingSetPrivate -Sum).Sum / 1MB
@@ -51,7 +51,7 @@ function Prova([string]$nome, [string]$exe, [string[]]$extra) {
     Start-Sleep -Seconds $att2
     $m2 = Misura $exe; $c0 = $m2.cpu; Start-Sleep -Seconds $cpuS; $m2b = Misura $exe
     $tipi = @{}; $flag = ''
-    foreach ($pr in @(Get-CimInstance Win32_Process -Filter "Name='chrome.exe'" | Where-Object { $_.ExecutablePath -ieq $exe -and $_.CommandLine -like "*$dati*" })) {
+    foreach ($pr in @(Get-CimInstance Win32_Process -Filter "Name='chrome.exe' OR Name='eclipse.exe'" | Where-Object { $_.ExecutablePath -ieq $exe -and $_.CommandLine -like "*$dati*" })) {
         $t = if ($pr.CommandLine -match '--type=([\w-]+)') { $Matches[1] } else { 'browser'; $flag = $pr.CommandLine }
         if ($pr.CommandLine -like '*--extension-process*') { $t += '(estensione)' }
         $tipi[$t] = 1 + [int]$tipi[$t]
@@ -60,7 +60,7 @@ function Prova([string]$nome, [string]$exe, [string[]]$extra) {
     $script:Avvio[$nome] = $flag
     $cpu2 = [math]::Round(($m2b.cpu - $c0) / $cpuS / [Environment]::ProcessorCount * 100, 1)
     Write-Host ("    dopo $et2`: {0} MB, CPU {1}%" -f $m2b.ram, $cpu2)
-    Get-CimInstance Win32_Process -Filter "Name='chrome.exe'" | Where-Object { $_.ExecutablePath -ieq $exe -and $_.CommandLine -like "*$dati*" } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
+    Get-CimInstance Win32_Process -Filter "Name='chrome.exe' OR Name='eclipse.exe'" | Where-Object { $_.ExecutablePath -ieq $exe -and $_.CommandLine -like "*$dati*" } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
     Start-Sleep -Seconds 3; Remove-Item -LiteralPath $dati -Recurse -Force -ErrorAction SilentlyContinue
     return [pscustomobject]@{ nome = $nome; ram1 = $m1b.ram; cpu1 = $cpu1; ram2 = $m2b.ram; cpu2 = $cpu2 }
 }

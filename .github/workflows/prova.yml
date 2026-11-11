@@ -1,0 +1,35 @@
+# Eclipse by LollozzOS - PACCHETTO DI PROVA (ramo strada2): si pubblica come "pre-release" prova-strada2.
+# Non e' mai "l'ultima versione": gli aggiornamenti automatici dei clienti non lo vedono.
+name: Eclipse - pacchetto di prova
+on:
+  push:
+    branches: [strada2]
+concurrency: eclipse-prova
+permissions:
+  contents: write
+jobs:
+  prova:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Strumenti
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq p7zip-full binutils zip jq >/dev/null
+          pip install -q brotli pillow
+      - name: Rebrand e pacchetto
+        run: |
+          U=$(curl -fsSL https://api.github.com/repos/ungoogled-software/ungoogled-chromium-windows/releases/latest)
+          URL=$(echo "$U" | jq -r '[.assets[] | select(.name | test("installer_x64\\.exe$"))][0].browser_download_url')
+          curl -fsSL "$URL" -o ungoogled.exe
+          bash costruisci/costruisci.sh ungoogled.exe 900 "$(echo "$U" | jq -r .tag_name)"
+          jq '.tag = "prova-strada2"' uscita/versione.json > uscita/v.json && mv uscita/v.json uscita/versione.json
+      - name: Pubblica come prova
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete prova-strada2 --repo "${{ github.repository }}" --yes --cleanup-tag || true
+          gh release create prova-strada2 --repo "${{ github.repository }}" --prerelease --latest=false --target "${{ github.sha }}" \
+            --title "PROVA strada 2 (non per i clienti)" \
+            --notes "Pacchetto di prova: eclipse.exe, pagine interne nello stile di Eclipse, pagina first run sostituita. Gli aggiornamenti automatici non lo installano." \
+            uscita/*.zip uscita/versione.json

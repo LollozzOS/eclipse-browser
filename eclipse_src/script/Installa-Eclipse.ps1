@@ -11,16 +11,17 @@ $ErrorActionPreference = 'Stop'
 $qui = Split-Path -Parent $MyInvocation.MyCommand.Path
 . (Join-Path $qui 'Eclipse-Comune.ps1')
 $sorg = Join-Path (Split-Path -Parent $qui) 'Eclipse'
-if (-not (Test-Path -LiteralPath (Join-Path $sorg 'chrome.exe'))) { throw "Manca la cartella Eclipse accanto a script\ ($sorg)" }
+if (-not ((Test-Path -LiteralPath (Join-Path $sorg 'eclipse.exe')) -or (Test-Path -LiteralPath (Join-Path $sorg 'chrome.exe')))) { throw "Manca la cartella Eclipse accanto a script\ ($sorg)" }
 $avvisi = @()
 
 Write-Host '  Eclipse by LollozzOS - installazione' -ForegroundColor Magenta
-Get-Process -Name chrome -ErrorAction SilentlyContinue | Where-Object { $_.Path -like "$script:ECLIPSE_DIR\*" } | Stop-Process -Force -ErrorAction SilentlyContinue
+Eclipse-Processi | Stop-Process -Force -ErrorAction SilentlyContinue
 
 # 1) il programma
 New-Item -ItemType Directory -Force -Path $script:ECLIPSE_DIR | Out-Null
 & robocopy.exe $sorg $script:ECLIPSE_DIR /E /NFL /NDL /NJH /NJS /NP /R:1 /W:1 | Out-Null
 if ($LASTEXITCODE -ge 8) { throw 'Copia di Eclipse non riuscita' }
+Eclipse-NomeNuovo
 New-Item -ItemType Directory -Force -Path $script:ECLIPSE_EST | Out-Null
 foreach ($e in @('core')) {
     & robocopy.exe (Join-Path (Split-Path -Parent $qui) $e) (Join-Path $script:ECLIPSE_EST $e) /MIR /NFL /NDL /NJH /NJS /NP /R:1 /W:1 | Out-Null
@@ -109,6 +110,7 @@ foreach ($v in @(@('DisplayName', 'Eclipse by LollozzOS'), @('DisplayVersion', $
 }
 New-ItemProperty -LiteralPath $u -Name 'NoModify' -Value 1 -PropertyType DWord -Force | Out-Null
 Write-Host '  [ok] collegamenti sul desktop e in Start, voce in App installate'
+Eclipse-TogliNomeVecchio
 # Eclipse tra i browser di Windows (App predefinite). Il predefinito lo sceglie il cliente o il Playbook.
 try { Eclipse-RegistraBrowser; Write-Host '  [ok] registrato in Windows come browser' } catch { $avvisi += "registrazione come browser non riuscita: $($_.Exception.Message)" }
 

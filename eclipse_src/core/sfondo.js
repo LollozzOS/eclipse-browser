@@ -23,13 +23,31 @@ chrome.runtime.onInstalled.addListener(async () => {
 // All'apertura di Eclipse la prima scheda puo' partire PRIMA che l'estensione sia pronta: in quel caso esce la
 // nuova scheda normale del browser invece di quella di Eclipse. Qui si sostituiscono quelle schede con la nostra.
 const NTP_BROWSER = /^chrome:\/\/(newtab|new-tab-page)\/?($|[?#])/;
+// (11/11) la pagina "first run" di ungoogled-chromium si apre al primo avvio: la chiudiamo (c'e' il benvenuto di Eclipse)
+const PRIMA_PAGINA = /^chrome:\/\/ungoogled-first-run/i;
+// se e' l'unica scheda della finestra non si chiude (si chiuderebbe Eclipse): diventa la nuova scheda di Eclipse
+async function togliPrimaPagina(t) {
+  try {
+    const nella = await chrome.tabs.query({ windowId: t.windowId });
+    if (nella.length > 1) await chrome.tabs.remove(t.id);
+    else await chrome.tabs.update(t.id, { url: chrome.runtime.getURL('nuovascheda.html') });
+  } catch (e) {}
+}
 async function sistemaNuoveSchede() {
   const nostra = chrome.runtime.getURL('nuovascheda.html');
   for (const t of await chrome.tabs.query({})) {
     const u = t.pendingUrl || t.url || '';
+    if (PRIMA_PAGINA.test(u)) { await togliPrimaPagina(t); continue; }
     if (NTP_BROWSER.test(u)) { try { await chrome.tabs.update(t.id, { url: nostra }); } catch (e) {} }
   }
 }
+// se si apre poco dopo (l'estensione parte prima delle schede)
+const avvio = Date.now();
+chrome.tabs.onUpdated.addListener((id, info, t) => {
+  if (Date.now() - avvio > 60000) return;
+  const u = info.url || t.pendingUrl || t.url || '';
+  if (PRIMA_PAGINA.test(u)) togliPrimaPagina(t);
+});
 chrome.runtime.onStartup.addListener(sistemaNuoveSchede);
 chrome.runtime.onInstalled.addListener(sistemaNuoveSchede);
 sistemaNuoveSchede();

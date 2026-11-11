@@ -11,7 +11,10 @@
   },
   "browser": {
     "check_default_browser": false,
-    "enable_spellchecking": false
+    "enable_spellchecking": false,
+    "theme": {
+      "color_scheme2": 2
+    }
   },
   "background_mode": {
     "enabled": false

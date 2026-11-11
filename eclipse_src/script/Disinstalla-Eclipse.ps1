@@ -3,7 +3,7 @@
 $admin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 if (-not $admin) { Start-Process powershell.exe -Verb RunAs -ArgumentList @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', ('"{0}"' -f $PSCommandPath)); exit }
 $dir = Join-Path $env:ProgramFiles 'Eclipse'
-Get-Process -Name chrome -ErrorAction SilentlyContinue | Where-Object { $_.Path -like "$dir\*" } | Stop-Process -Force -ErrorAction SilentlyContinue
+Get-Process -ErrorAction SilentlyContinue | Where-Object { $_.Path -and $_.Path -like "$dir\*" } | Stop-Process -Force -ErrorAction SilentlyContinue
 foreach ($lnk in @((Join-Path ([Environment]::GetFolderPath('CommonDesktopDirectory')) 'Eclipse.lnk'), (Join-Path ([Environment]::GetFolderPath('CommonPrograms')) 'Eclipse.lnk'))) { Remove-Item -LiteralPath $lnk -Force -ErrorAction SilentlyContinue }
 Remove-Item -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Eclipse by LollozzOS' -Recurse -Force -ErrorAction SilentlyContinue
 Unregister-ScheduledTask -TaskName 'Eclipse Aggiornamenti' -TaskPath '\LollozzOS\' -Confirm:$false -ErrorAction SilentlyContinue

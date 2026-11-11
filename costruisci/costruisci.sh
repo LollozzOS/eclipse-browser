@@ -21,6 +21,10 @@ python3 -W ignore "$R/costruisci/rebrand_pak.py" "$E/$VER" "$R/marchio"
 for f in chrome_wer.dll notification_helper.exe chrome_pwa_launcher.exe; do find "$E" -name "$f" -delete; done
 (cd "$R/costruisci" && { [ -d node_modules ] || npm install --silent --no-audit --no-fund; } && node rebrand_pe.js "$E" "$R/marchio" "$VER")
 cp "$R/pacchetto/initial_preferences" "$E/"
+python3 -W ignore "$R/costruisci/stile_pagine.py" "$E/$VER/resources.pak"
+python3 "$R/costruisci/prima_pagina.py" "$E/$VER/chrome.dll"
+# il programma si chiama eclipse.exe; chrome.exe resta (identico) solo per i PC con gli script di aggiornamento vecchi
+cp "$E/chrome.exe" "$E/eclipse.exe"
 
 echo "== 3) Scudo: liste aggiornate di oggi + estensione unica"
 LI=$L/liste; mkdir -p "$LI"; GH=https://raw.githubusercontent.com
@@ -39,8 +43,10 @@ cp "$R"/pacchetto/*.bat "$R/pacchetto/LEGGIMI.txt" "$P/"
 VERS="$VER.$NUM"
 printf '%s\n' "$VERS" > "$P/versione.txt"
 # controlli finali: il nome Eclipse c'e', i file tolti non ci sono
-for x in "$E/chrome.exe" "$E/$VER/chrome.dll"; do strings -el "$x" | grep -q "LollozzOS" || { echo "ERRORE: $x senza i dati Eclipse/LollozzOS"; exit 1; }; done
+for x in "$E/eclipse.exe" "$E/$VER/chrome.dll"; do strings -el "$x" | grep -q "LollozzOS" || { echo "ERRORE: $x senza i dati Eclipse/LollozzOS"; exit 1; }; done
 for f in chrome_wer.dll notification_helper.exe chrome_pwa_launcher.exe; do [ -z "$(find "$E" -name "$f")" ] || { echo "ERRORE: $f ancora presente"; exit 1; }; done
+grep -q "ungoogled-chromium first run page" "$E/$VER/chrome.dll" && { echo "ERRORE: pagina first run ancora dentro"; exit 1; }
+python3 -c "import sys;sys.exit(0 if open(sys.argv[1],'rb').read().count(b'/*e*/')>100 else 1)" "$E/$VER/resources.pak" || { echo "ERRORE: colori delle pagine interne mancanti"; exit 1; }
 Z="Eclipse_by_LollozzOS_$VERS.zip"
 (cd "$L" && zip -qr -9 "$U/$Z" "Eclipse by LollozzOS")
 SHA=$(sha256sum "$U/$Z" | cut -d' ' -f1); DIM=$(stat -c %s "$U/$Z")
