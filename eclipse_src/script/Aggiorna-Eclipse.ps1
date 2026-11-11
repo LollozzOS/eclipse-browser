@@ -65,8 +65,8 @@ try {
         if (-not (Test-Path -LiteralPath $lnk)) { continue }
         $l = $sh.CreateShortcut($lnk)
         if ($l.Arguments -match '(--user-data-dir="[^"]+")') {
-            $est = (@(Eclipse-Estensioni) -join ',')
-            $l.Arguments = (@($Matches[1], '--no-default-browser-check') + $script:ECLIPSE_LEGGERO + @(('--load-extension="{0}"' -f $est))) -join ' '
+            # (11/11 notte) la riga corta che entra nel collegamento (Windows taglia oltre 1023 caratteri)
+            $l.Arguments = (Eclipse-ArgomentiCollegamento $Matches[1])
             $l.TargetPath = $script:ECLIPSE_EXE; $l.IconLocation = "$($script:ECLIPSE_EXE),0"
             $l.Save()
         }
