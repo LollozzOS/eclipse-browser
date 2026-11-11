@@ -19,7 +19,9 @@ chrome.runtime.onInstalled.addListener(async () => {
 //   "Forse intendevi modificare la pagina?" (che con "Ripristina" spegneva l'estensione)
 // Eclipse carica le sue estensioni a ogni apertura e il browser le considera "appena installate" ogni volta:
 // per questo il benvenuto si ricorda in benvenutoVisto.
-const NTP_BROWSER = /^chrome:\/\/(newtab|new-tab-page)\/?($|[?#])/;
+// (11/11 notte) con un motore di ricerca diverso da Google (es. Brave) Chromium apre chrome://new-tab-page-third-party:
+// prima non era riconosciuta e restava la nuova scheda del browser, senza la barra di ricerca di Eclipse
+const NTP_BROWSER = /^chrome:\/\/(newtab|new-tab-page|new-tab-page-third-party)\/?($|[?#])/;
 const PRIMA_PAGINA = /^chrome:\/\/ungoogled-first-run/i;
 const nostraNtp = () => chrome.runtime.getURL('nuovascheda.html');
 const benvenutoUrl = () => chrome.runtime.getURL('benvenuto.html');

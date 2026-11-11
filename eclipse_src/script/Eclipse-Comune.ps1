@@ -95,6 +95,8 @@ $script:ECLIPSE_SPENTE = @('MediaRouter', 'BackForwardCache', 'SpareRendererForS
     'Glic', 'GlicRollout', 'LensOverlay', 'HistoryEmbeddings', 'TabOrganization', 'Compose', 'TextSafetyClassifier',
     'OptimizationGuideOnDeviceModel', 'OnDeviceModelPerformanceParams', 'OptimizationHints', 'AutofillAi',
     'BrowsingTopics', 'InterestGroupStorage', 'Fledge', 'AttributionReportingCrossAppWeb', 'PrivacySandboxAdsAPIsOverride', 'SharedStorageAPI',
+    # (11/11 notte) qui in alto: nei collegamenti entra solo la prima parte della lista (vedi Eclipse-ArgomentiCollegamento)
+    'IgnoreSearchProviderOverrides',
     # (11/11) promozioni, suggerimenti e finestrelle di Chromium: tolte (nomi trovati nel file di Chromium 157)
     'EnableNtpBrowserPromos', 'IPH_ComposeNewBadgeFeature', 'IPH_DesktopCustomizeChromeAutoOpen',
     'IPH_DesktopCustomizeChromeExperiment', 'IPH_DownloadEsbPromo', 'IPH_ExtensionsZeroStatePromo',
@@ -110,18 +112,35 @@ $script:ECLIPSE_SPENTE = @('MediaRouter', 'BackForwardCache', 'SpareRendererForS
     'IPH_TabGroupsSaveV2Intro', 'IPH_VerticalTabstripTutorialFeature', 'IPH_iOSAddressPromoDesktop',
     'IPH_iOSEnhancedBrowsingDesktop', 'IPH_iOSLensPromoDesktop', 'IPH_iOSPaymentPromoDesktop',
     'IPH_iOSPriceTrackingDesktop', 'IPH_iOSTabGroupsDesktop', 'MobileNTPPromoOnDesktop',
-    'MobilePromoOnDesktopForcePromo', 'MobilePromoOnDesktopWithQRCode', 'MobilePromoOnDesktopWithReminder',
-    'IgnoreSearchProviderOverrides')
+    'MobilePromoOnDesktopForcePromo', 'MobilePromoOnDesktopWithQRCode', 'MobilePromoOnDesktopWithReminder')
 $script:ECLIPSE_LEGGERO = @('--renderer-process-limit=8', ('--disable-features=' + ($script:ECLIPSE_SPENTE -join ',')), '--enable-features=SideBySide')
 # file del programma che in Eclipse non servono (studiati il 10/11): segnalazione errori a Windows, notifiche a
 # browser chiuso (servirebbe una registrazione che Eclipse non fa), app web con apertura dei file. Solo spazio disco.
 $script:ECLIPSE_FILE_INUTILI = @('chrome_wer.dll', 'notification_helper.exe', 'chrome_pwa_launcher.exe')
-function Eclipse-Argomenti {
+# (11/11 notte) Lollozz: "Eclipse aperto dall'icona non ha estensioni". Un collegamento di Windows tiene al massimo
+# 1023 caratteri di argomenti: la riga intera ne aveva 1933 e Windows la tagliava dopo IPH_ReadingListDiscovery,
+# cosi' --load-extension (in fondo) spariva. Per i collegamenti: prima quello che serve (profilo, estensioni, processi,
+# SideBySide), poi le funzioni da spegnere finche' c'e' posto (in ordine: AI e privacy prima, finestrelle dopo).
+# Il comando registrato in Windows (link, file .html/.pdf) non ha limite e tiene la lista intera.
+$script:ECLIPSE_MAX_COLLEGAMENTO = 1000
+function Eclipse-ArgomentiCollegamento([string]$Dati) {
     $est = (@(Eclipse-Estensioni) -join ',')
-    # (10/11) meno processi delle pagine (tetto 8) e niente memoria delle pagine per il tasto Indietro: meno RAM
-    $a = @(('--user-data-dir="{0}"' -f $script:ECLIPSE_DATI), '--no-default-browser-check') + $script:ECLIPSE_LEGGERO
+    $a = @($Dati)
     if ($est) { $a += ('--load-extension="{0}"' -f $est) }
-    return ($a -join ' ')
+    $a += @('--no-default-browser-check', '--renderer-process-limit=8', '--enable-features=SideBySide')
+    $riga = ($a -join ' ')
+    $spente = @(); $usati = $riga.Length + ' --disable-features='.Length
+    foreach ($n in $script:ECLIPSE_SPENTE) {
+        $piu = $n.Length + $(if ($spente.Count) { 1 } else { 0 })
+        if ($usati + $piu -gt $script:ECLIPSE_MAX_COLLEGAMENTO) { break }
+        $spente += $n; $usati += $piu
+    }
+    if ($spente.Count) { $riga += (' --disable-features=' + ($spente -join ',')) }
+    return $riga
+}
+function Eclipse-Argomenti {
+    # (10/11) meno processi delle pagine (tetto 8) e niente memoria delle pagine per il tasto Indietro: meno RAM
+    return (Eclipse-ArgomentiCollegamento ('--user-data-dir="{0}"' -f $script:ECLIPSE_DATI))
 }
 
 # (11/11) Eclipse registrato in Windows come browser: compare in Impostazioni > App > App predefinite e si puo'
@@ -167,6 +186,25 @@ function Eclipse-RegistraBrowser {
         Eclipse-Valore "SOFTWARE\Classes\$f\OpenWithProgids" $script:ECLIPSE_PROGID ''
     }
     Eclipse-Valore 'SOFTWARE\RegisteredApplications' 'Eclipse' "Software\Clients\StartMenuInternet\Eclipse\Capabilities"
+    # (11/11 notte) anche i collegamenti con la riga corta: l'aggiornamento della versione di prima li rifa' lunghi
+    # (tagliati da Windows, senza estensioni) e poi chiama questa funzione, che li sistema subito
+    try { [void](Eclipse-SistemaCollegamenti) } catch {}
+}
+# (11/11 notte) i collegamenti Eclipse (desktop e Start) con la riga che entra nel limite di Windows; il profilo resta il suo
+function Eclipse-SistemaCollegamenti {
+    $sh = New-Object -ComObject WScript.Shell
+    $n = 0
+    foreach ($lnk in @((Join-Path ([Environment]::GetFolderPath('CommonDesktopDirectory')) 'Eclipse.lnk'), (Join-Path ([Environment]::GetFolderPath('CommonPrograms')) 'Eclipse.lnk'))) {
+        if (-not (Test-Path -LiteralPath $lnk)) { continue }
+        $l = $sh.CreateShortcut($lnk)
+        $dati = '--user-data-dir="{0}"' -f $script:ECLIPSE_DATI
+        if ([string]$l.Arguments -match '(--user-data-dir="[^"]+")') { $dati = $Matches[1] }
+        $nuovi = Eclipse-ArgomentiCollegamento $dati
+        if ([string]$l.Arguments -ceq $nuovi) { continue }
+        $l.Arguments = $nuovi; $l.TargetPath = $script:ECLIPSE_EXE; $l.IconLocation = "$($script:ECLIPSE_EXE),0"
+        $l.Save(); $n++
+    }
+    return $n
 }
 function Eclipse-TogliRegistrazione {
     $hk = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry64)
