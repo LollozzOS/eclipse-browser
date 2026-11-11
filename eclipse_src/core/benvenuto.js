@@ -1,7 +1,20 @@
 const demoB = new URLSearchParams(location.search).get('demo');
 const apri = (u) => { if (!demoB) chrome.runtime.sendMessage({ apri: u }); };
 document.getElementById('cerca').onclick = () => apri('chrome://settings/search');
-document.getElementById('imp').onclick = () => apri('chrome://settings/importData');
+// "Importa": la guida (preferiti e cronologia con un clic, password con il file esportato da Chrome)
+const velo = document.getElementById('velo');
+document.getElementById('imp').onclick = () => velo.classList.add('on');
+document.getElementById('fatto').onclick = () => velo.classList.remove('on');
+velo.onclick = (e) => { if (e.target === velo) velo.classList.remove('on'); };
+document.getElementById('impPref').onclick = () => apri('chrome://settings/importData');
+document.getElementById('impPass').onclick = () => apri('chrome://password-manager/settings');
+document.getElementById('copia').onclick = (e) => {
+  const v = 'chrome://password-manager/settings', b = e.currentTarget;
+  const vecchio = () => { const t = document.createElement('textarea'); t.value = v; document.body.appendChild(t); t.select(); try { document.execCommand('copy'); } catch (x) {} t.remove(); };
+  try { navigator.clipboard.writeText(v).catch(vecchio); } catch (x) { vecchio(); }
+  b.textContent = 'Copiato \u2713';
+};
+if (new URLSearchParams(location.search).get('guida')) velo.classList.add('on');
 document.getElementById('via').onclick = () => { location.href = 'nuovascheda.html'; };
 
 // le scelte: privacy dei cookie, finestre dei cookie (Eclipse Scudo), scorciatoie "!" (si salvano subito)

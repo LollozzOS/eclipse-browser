@@ -67,7 +67,7 @@ chrome.runtime.onInstalled.addListener(sistemaTutte);
 
 // richieste dalle pagine: aprire le pagine interne del browser (le pagine non possono farlo da sole)
 chrome.runtime.onMessage.addListener((m, _s, rispondi) => {
-  if (m && m.apri && /^chrome:\/\/(settings|extensions)/.test(m.apri)) { chrome.tabs.create({ url: m.apri }); return false; }
+  if (m && m.apri && /^chrome:\/\/(settings|extensions|password-manager)/.test(m.apri)) { chrome.tabs.create({ url: m.apri }); return false; }
   if (m && m.conta) { chrome.tabs.query({ discarded: true }, (t) => rispondi({ inPausa: t.length })); return true; }
   return false;
 });

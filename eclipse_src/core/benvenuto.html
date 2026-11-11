@@ -1,47 +1,69 @@
 <!doctype html><html lang="it"><head><meta charset="utf-8"><title>Benvenuto in Eclipse</title>
 <script src="colore.js"></script><script src="comune.js"></script><link rel="stylesheet" href="stile.css">
 <style>
-body{background:radial-gradient(1100px 520px at 50% -12%,var(--acc-luce),transparent 70%),#0a0912;min-height:100%}
-main{max-width:680px;margin:0 auto;padding:7vh 24px 40px}
-.testa{text-align:center;margin-bottom:28px}.testa img{width:88px;height:88px}
-h1{font-size:30px;font-weight:600;margin:14px 0 6px;letter-spacing:-.3px}.testa p{margin:0 auto;max-width:560px;color:var(--dim);font-size:14.5px;line-height:1.6}
-.carta{background:var(--pan);border:1px solid var(--bordo);border-radius:16px;padding:6px 18px;margin-bottom:14px}
-.carta h2{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--dim);margin:12px 0 2px}
-.riga{display:flex;align-items:center;gap:14px;padding:12px 0;border-top:1px solid #1f1c2c}.carta h2+.riga{border-top:0}
-.ok{width:26px;height:26px;border-radius:50%;background:var(--acc);color:var(--su-acc);display:flex;align-items:center;justify-content:center;flex:none}
-.ok svg{width:14px;height:14px}
-.riga div{flex:1;min-width:0}.riga b{display:block;font-size:14px;font-weight:600}.riga span{display:block;color:var(--dim);font-size:12.5px;margin-top:2px}
-.pic{background:transparent;color:#cfcbe0;border:1px solid #3a3550;border-radius:9px;padding:7px 14px;font-size:12.5px;font-family:inherit;cursor:pointer;flex:none}
+/* (11/11) una schermata sola, simmetrica: titolo in alto al centro, due riquadri uguali affiancati, pulsante sotto.
+   Le misure seguono l'altezza e la larghezza della finestra: nessuno scorrimento a schermo intero */
+html{font-size:clamp(9px,min(1.48vh,1.02vw),16px)}
+body{background:radial-gradient(70vw 55vh at 50% -14%,var(--acc-luce),transparent 70%),#0a0912;min-height:100vh;display:flex;align-items:center;justify-content:center}
+main{width:min(118rem,94vw);padding:2vh 0;text-align:center}
+.testa img{width:6rem;height:6rem}
+h1{font-size:3.2rem;font-weight:600;margin:1rem 0 .6rem;letter-spacing:-.03em}
+.testa p{margin:0 auto;color:var(--dim);font-size:1.5rem;line-height:1.55;max-width:70rem}
+.due{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:2.6rem;text-align:left;align-items:stretch}
+.carta{background:var(--pan);border:1px solid var(--bordo);border-radius:1.5rem;padding:.4rem 1.8rem 1rem;display:flex;flex-direction:column}
+.carta h2{font-size:1.15rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin:1.2rem 0 .2rem}
+.righe{flex:1;display:flex;flex-direction:column;justify-content:space-between}
+.riga{flex:1;display:flex;align-items:center;gap:1.3rem;padding:1rem 0;border-top:1px solid #1f1c2c}.riga:first-child{border-top:0}
+.ok,.ico{width:2.5rem;height:2.5rem;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:none}
+.ok{background:var(--acc);color:var(--su-acc)}.ico{background:#26233a;color:var(--acc-chiaro)}
+.ok svg,.ico svg{width:1.35rem;height:1.35rem}
+.riga div{flex:1;min-width:0}.riga b{display:block;font-size:1.4rem;font-weight:600}.riga span{display:block;color:var(--dim);font-size:1.22rem;margin-top:.2rem;line-height:1.4}
+.pic{background:transparent;color:#cfcbe0;border:1px solid #3a3550;border-radius:.85rem;padding:.7rem 1.4rem;font-size:1.25rem;font-family:inherit;cursor:pointer;flex:none;min-width:8.5rem}
 .pic:hover{border-color:var(--acc-chiaro);color:#fff}
-.int{width:38px;height:22px;border-radius:11px;background:#3a3550;position:relative;cursor:pointer;flex:none;border:0;padding:0}
-.int::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .15s}
-.int.on{background:var(--acc)}.int.on::after{left:19px}
-.via{display:block;width:100%;margin-top:22px;padding:14px;font-size:15px;border-radius:12px}
-.nota{color:#77748a;font-size:11.5px;text-align:center;margin-top:20px;line-height:1.5}
+.int{width:3.7rem;height:2.15rem;border-radius:1.1rem;background:#3a3550;position:relative;cursor:pointer;flex:none;border:0;padding:0}
+.int::after{content:"";position:absolute;top:.3rem;left:.3rem;width:1.55rem;height:1.55rem;border-radius:50%;background:#fff;transition:left .15s}
+.int.on{background:var(--acc)}.int.on::after{left:1.85rem}
+.via{display:block;width:min(44rem,100%);margin:2.2rem auto 0;padding:1.3rem;font-size:1.5rem;border-radius:1.15rem}
+.nota{color:#77748a;font-size:1.1rem;margin-top:1.3rem;line-height:1.5}
+@media (max-width:900px){html{font-size:clamp(9.5px,1.5vh,14px)}.due{grid-template-columns:1fr}main{width:min(62rem,94vw)}}
+/* la guida dell'importazione (si apre con "Importa") */
+.velo{position:fixed;inset:0;background:rgba(5,4,10,.72);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:9;text-align:left}
+.velo.on{display:flex}
+.guida{width:min(64rem,92vw);background:var(--pan);border:1px solid var(--bordo);border-radius:1.6rem;padding:2.2rem 2.4rem;box-shadow:0 2rem 6rem rgba(0,0,0,.5)}
+.guida h3{font-size:2rem;font-weight:600;margin:0 0 .4rem}.guida>p{color:var(--dim);font-size:1.3rem;margin:0 0 1.6rem}
+.blocco{border:1px solid var(--bordo);border-radius:1.2rem;padding:1.3rem 1.5rem;margin-bottom:1.2rem;background:#100e18}
+.blocco b{display:block;font-size:1.45rem;margin-bottom:.3rem}.blocco>span{display:block;color:var(--dim);font-size:1.22rem;line-height:1.45}
+.passo{display:flex;align-items:center;gap:1.2rem;padding:1rem 0 0}
+.n{width:2.3rem;height:2.3rem;border-radius:50%;background:var(--acc);color:var(--su-acc);font-weight:700;font-size:1.2rem;display:flex;align-items:center;justify-content:center;flex:none}
+.passo div{flex:1;min-width:0;font-size:1.25rem;line-height:1.45;color:#e6e2f2}.passo code{font:1.2rem Consolas,"Cascadia Mono",monospace;color:var(--acc-chiaro);user-select:all}
+.avviso{color:#c9a8ff;font-size:1.15rem;margin-top:1rem}
+.chiudi{display:block;margin:1.4rem 0 0 auto}
 </style></head><body><main>
 <div class="testa"><img src="logo.svg" alt=""><h1>Benvenuto in Eclipse</h1><p>Il browser progettato per il massimo risparmio di memoria e di risorse in background, con il blocco integrato di pubblicità, tracciamento e contenuti superflui.</p></div>
-
-<div class="carta"><h2>Ottimizzazioni attive</h2>
-<div class="riga"><i class="ok"><svg viewBox="0 0 16 16"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></i>
-<div><b>Blocco di pubblicità e tracciamento</b><span>Eclipse Scudo filtra annunci, tracker e contenuti superflui su tutti i siti, inclusi YouTube e Twitch.</span></div></div>
-<div class="riga"><i class="ok"><svg viewBox="0 0 16 16"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></i>
-<div><b>Gestione intelligente della memoria</b><span>Le schede inattive vengono sospese automaticamente per liberare RAM.</span></div></div>
-<div class="riga"><i class="ok"><svg viewBox="0 0 16 16"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></i>
-<div><b>Nessuna attività superflua in background</b><span>Servizi non essenziali, funzioni di intelligenza artificiale e processi inutilizzati sono disattivati.</span></div></div>
-<div class="riga"><i class="ok"><svg viewBox="0 0 16 16"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></i>
-<div><b>Ricerca Google</b><span>Motore di ricerca predefinito per la barra degli indirizzi e la nuova scheda.</span></div><button class="pic" id="cerca">Cambia</button></div>
+<div class="due">
+<div class="carta"><h2>Ottimizzazioni attive</h2><div class="righe">
+<div class="riga"><i class="ok"><svg viewBox="0 0 16 16"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></i><div><b>Blocco di pubblicità e tracciamento</b><span>Eclipse Scudo filtra annunci, tracker e contenuti superflui su tutti i siti, inclusi YouTube e Twitch.</span></div></div>
+<div class="riga"><i class="ok"><svg viewBox="0 0 16 16"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></i><div><b>Gestione intelligente della memoria</b><span>Le schede inattive vengono sospese automaticamente per liberare RAM.</span></div></div>
+<div class="riga"><i class="ok"><svg viewBox="0 0 16 16"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></i><div><b>Nessuna attività superflua in background</b><span>Servizi non essenziali, funzioni di intelligenza artificiale e processi inutilizzati sono disattivati.</span></div></div>
+<div class="riga"><i class="ok"><svg viewBox="0 0 16 16"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></i><div><b>Ricerca Google</b><span>Motore di ricerca predefinito per la barra degli indirizzi e la nuova scheda.</span></div><button class="pic" id="cerca">Cambia</button></div>
+</div></div>
+<div class="carta"><h2>I tuoi dati e le tue preferenze</h2><div class="righe">
+<div class="riga"><i class="ico"><svg viewBox="0 0 16 16"><path d="M8 2v8m-3.5-3.5L8 10l3.5-3.5M3 13h10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></i><div><b>Preferiti, password e cronologia</b><span>Trasferiscili da Chrome, Edge o Firefox: ti guidiamo passo per passo.</span></div><button class="pic" id="imp">Importa</button></div>
+<div class="riga"><i class="ico"><svg viewBox="0 0 16 16"><path d="M8 1.8l5 2v4c0 3.2-2.2 5.3-5 6.4-2.8-1.1-5-3.2-5-6.4v-4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></i><div><b>Protezione dai cookie di terze parti</b><span>Impedisce ai siti di seguirti da una pagina all'altra. Alcuni accessi tramite servizi esterni potrebbero non funzionare.</span></div><button class="int" data-k="cookie3"></button></div>
+<div class="riga"><i class="ico"><svg viewBox="0 0 16 16"><path d="M2.5 3.5h11v9h-11zM2.5 6.5h11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></i><div><b>Rimozione dei banner dei cookie</b><span>Nasconde automaticamente le richieste di consenso. Se un sito non risponde, disattiva Scudo solo su quel sito.</span></div><button class="int" data-k="banner"></button></div>
+<div class="riga"><i class="ico"><svg viewBox="0 0 16 16"><path d="M6 2.5v8M6 13.2v.3M10.5 4l-1 9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></i><div><b>Scorciatoie di ricerca</b><span>Digita !yt, !a o !w nella nuova scheda per cercare direttamente su YouTube, Amazon o Wikipedia.</span></div><button class="int" data-k="bang"></button></div>
+</div></div>
 </div>
-
-<div class="carta"><h2>Importa i tuoi dati</h2>
-<div class="riga"><div><b>Preferiti, password e cronologia</b><span>Trasferiscili da Chrome, Edge o Firefox in pochi secondi.</span></div><button class="pic" id="imp">Importa</button></div>
-</div>
-
-<div class="carta"><h2>Preferenze</h2>
-<div class="riga"><div><b>Protezione dai cookie di terze parti</b><span>Impedisce ai siti di seguirti da una pagina all'altra. Alcuni accessi tramite servizi esterni potrebbero non funzionare.</span></div><button class="int" data-k="cookie3"></button></div>
-<div class="riga"><div><b>Rimozione dei banner dei cookie</b><span>Nasconde automaticamente le richieste di consenso. Se un sito non risponde, disattiva Scudo solo su quel sito.</span></div><button class="int" data-k="banner"></button></div>
-<div class="riga"><div><b>Scorciatoie di ricerca</b><span>Digita !yt, !a o !w nella nuova scheda per cercare direttamente su YouTube, Amazon o Wikipedia.</span></div><button class="int" data-k="bang"></button></div>
-</div>
-
 <button class="pri via" id="via">Inizia a navigare</button>
 <p class="nota">Eclipse è basato sui progetti open source Chromium e Ungoogled Chromium. Crediti e licenze in Impostazioni › Informazioni.</p>
+<div class="velo" id="velo"><div class="guida">
+<h3>Importa i tuoi dati</h3><p>Due strade: una per preferiti e cronologia, una per le password.</p>
+<div class="blocco"><b>Preferiti e cronologia</b><span>Da Chrome, Edge o Firefox con un clic: scegli il browser e conferma.</span>
+<div class="passo"><span class="n">1</span><div>Apri l'importazione di Eclipse e scegli il browser di prima.</div><button class="pic" id="impPref">Importa</button></div></div>
+<div class="blocco"><b>Password</b><span>Chrome protegge le password in modo che solo lui possa leggerle: si passano con un file, in due minuti.</span>
+<div class="passo"><span class="n">1</span><div>In Chrome apri <code>chrome://password-manager/settings</code> e premi <i>Esporta password</i>.</div><button class="pic" id="copia">Copia indirizzo</button></div>
+<div class="passo"><span class="n">2</span><div>Qui in Eclipse premi <i>Importa password</i> e scegli il file salvato.</div><button class="pic" id="impPass">Importa password</button></div>
+<p class="avviso">Al termine cancella il file: contiene le password in chiaro.</p></div>
+<button class="pri chiudi" id="fatto">Fatto</button>
+</div></div>
 </main><script src="benvenuto.js"></script></body></html>
