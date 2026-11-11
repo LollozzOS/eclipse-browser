@@ -28,10 +28,12 @@ function Eclipse-ScriviTema([string]$Hex) {
     $dir = Join-Path $script:ECLIPSE_EST 'tema'
     New-Item -ItemType Directory -Force -Path $dir | Out-Null
     $c = [ordered]@{
-        frame = (Eclipse-Rgb $h 0.16); frame_inactive = (Eclipse-Rgb $h 0.12)
-        toolbar = (Eclipse-Rgb $h 0.24); tab_text = @(255, 255, 255); tab_background_text = @(189, 183, 208)
+        # (12/11) Lollozz: "come Chrome, una parte nera e una viola": riga delle schede nera, barra degli
+        # indirizzi e dei preferiti (e scheda aperta) nel viola del tema, casella degli indirizzi piu' scura
+        frame = @(0, 0, 0); frame_inactive = @(10, 10, 12)
+        toolbar = (Eclipse-Rgb $h 0.42); tab_text = @(255, 255, 255); tab_background_text = @(189, 183, 208)
         bookmark_text = @(225, 220, 240); ntp_background = @(8, 7, 13); ntp_text = @(241, 237, 250)
-        omnibox_background = (Eclipse-Rgb $h 0.10); omnibox_text = @(241, 237, 250)
+        omnibox_background = (Eclipse-Rgb $h 0.14); omnibox_text = @(241, 237, 250)
         toolbar_button_icon = (Eclipse-Rgb $h 1.55); button_background = (Eclipse-Rgb $h 0.30)
     }
     $man = [ordered]@{ manifest_version = 3; name = 'Eclipse - tema'; version = '1.0.' + [int]([DateTimeOffset]::UtcNow.ToUnixTimeSeconds() / 60 % 60000); theme = [ordered]@{ colors = $c } }
@@ -189,6 +191,8 @@ function Eclipse-RegistraBrowser {
     # (11/11 notte) anche i collegamenti con la riga corta: l'aggiornamento della versione di prima li rifa' lunghi
     # (tagliati da Windows, senza estensioni) e poi chiama questa funzione, che li sistema subito
     try { [void](Eclipse-SistemaCollegamenti) } catch {}
+    # (12/11) e il tema con i colori nuovi nel colore che il cliente ha gia' (l'aggiornamento di prima non lo rifaceva)
+    try { [void](Eclipse-ScriviTema (Eclipse-ColoreAttuale)) } catch {}
 }
 # (11/11 notte) i collegamenti Eclipse (desktop e Start) con la riga che entra nel limite di Windows; il profilo resta il suo
 function Eclipse-SistemaCollegamenti {
