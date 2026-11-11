@@ -26,8 +26,8 @@ NUOVA = '''<title>Eclipse</title>
 <base target="_blank">
 <section>
  <h1>Eclipse by LollozzOS</h1>
- <p>Il browser progettato per il massimo risparmio di memoria e di risorse in background, con il blocco integrato
- di pubblicit&agrave;, tracciamento e contenuti superflui.</p>
+ <p>Il browser di LollozzOS, creato da Lollozz: massimo risparmio di memoria e risorse in background, con blocco
+ integrato di pubblicit&agrave;, tracciamento e contenuti superflui.</p>
  <p>Eclipse &egrave; basato sui progetti open source <a href="https://www.chromium.org/">Chromium</a> e
  <a href="https://github.com/ungoogled-software/ungoogled-chromium">ungoogled-chromium</a>.
  Crediti e licenze in Impostazioni &rsaquo; Informazioni.</p>
