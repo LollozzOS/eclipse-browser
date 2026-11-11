@@ -66,6 +66,59 @@ function Eclipse-Argomenti {
     return ($a -join ' ')
 }
 
+# (11/11) Eclipse registrato in Windows come browser: compare in Impostazioni > App > App predefinite e si puo'
+# scegliere per i siti (http/https) e i file .html/.pdf. Il "come aprire" usa %LOCALAPPDATA% (vale per ogni utente
+# del PC) con le stesse impostazioni dei collegamenti. Chiamata dall'installazione e da ogni aggiornamento.
+$script:ECLIPSE_PROGID = 'EclipseHTML'
+$script:ECLIPSE_FILE_WEB = @('.htm', '.html', '.shtml', '.xht', '.xhtml', '.svg', '.webp', '.pdf')
+function Eclipse-Chiave([string]$percorso) {
+    $hk = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry64)
+    $k = $hk.CreateSubKey($percorso); $hk.Close(); return $k
+}
+function Eclipse-Valore([string]$percorso, [string]$nome, [string]$valore, [string]$tipo = 'String') {
+    $k = Eclipse-Chiave $percorso
+    try { $k.SetValue($nome, $valore, [Microsoft.Win32.RegistryValueKind]$tipo) } finally { $k.Close() }
+}
+function Eclipse-RegistraBrowser {
+    $exe = $script:ECLIPSE_EXE
+    $est = (@(Eclipse-Estensioni) -join ',')
+    $a = @('--user-data-dir="%LOCALAPPDATA%\Eclipse\User Data"', '--no-default-browser-check') + $script:ECLIPSE_LEGGERO
+    if ($est) { $a += ('--load-extension="{0}"' -f $est) }
+    $avvio = ('"{0}" {1}' -f $exe, ($a -join ' '))
+    $icona = "$exe,0"
+    $p = 'SOFTWARE\Classes\' + $script:ECLIPSE_PROGID
+    Eclipse-Valore $p '' 'Eclipse HTML Document'
+    Eclipse-Valore $p 'FriendlyTypeName' 'Eclipse HTML Document'
+    Eclipse-Valore "$p\Application" 'ApplicationName' 'Eclipse'
+    Eclipse-Valore "$p\Application" 'ApplicationDescription' 'Eclipse by LollozzOS'
+    Eclipse-Valore "$p\Application" 'ApplicationCompany' 'LollozzOS'
+    Eclipse-Valore "$p\Application" 'ApplicationIcon' $icona
+    Eclipse-Valore "$p\DefaultIcon" '' $icona
+    Eclipse-Valore "$p\shell\open\command" '' ($avvio + ' --single-argument %1') 'ExpandString'
+    $c = 'SOFTWARE\Clients\StartMenuInternet\Eclipse'
+    Eclipse-Valore $c '' 'Eclipse'
+    Eclipse-Valore "$c\DefaultIcon" '' $icona
+    Eclipse-Valore "$c\shell\open\command" '' $avvio 'ExpandString'
+    Eclipse-Valore "$c\Capabilities" 'ApplicationName' 'Eclipse'
+    Eclipse-Valore "$c\Capabilities" 'ApplicationDescription' 'Eclipse by LollozzOS: browser leggero senza pubblicita'''
+    Eclipse-Valore "$c\Capabilities" 'ApplicationIcon' $icona
+    Eclipse-Valore "$c\Capabilities\StartMenu" 'StartMenuInternet' 'Eclipse'
+    foreach ($u in @('http', 'https')) { Eclipse-Valore "$c\Capabilities\URLAssociations" $u $script:ECLIPSE_PROGID }
+    foreach ($f in $script:ECLIPSE_FILE_WEB) {
+        Eclipse-Valore "$c\Capabilities\FileAssociations" $f $script:ECLIPSE_PROGID
+        Eclipse-Valore "SOFTWARE\Classes\$f\OpenWithProgids" $script:ECLIPSE_PROGID ''
+    }
+    Eclipse-Valore 'SOFTWARE\RegisteredApplications' 'Eclipse' "Software\Clients\StartMenuInternet\Eclipse\Capabilities"
+}
+function Eclipse-TogliRegistrazione {
+    $hk = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry64)
+    try {
+        foreach ($p in @(('SOFTWARE\Classes\' + $script:ECLIPSE_PROGID), 'SOFTWARE\Clients\StartMenuInternet\Eclipse')) { try { $hk.DeleteSubKeyTree($p, $false) } catch {} }
+        foreach ($f in $script:ECLIPSE_FILE_WEB) { $k = $hk.OpenSubKey("SOFTWARE\Classes\$f\OpenWithProgids", $true); if ($k) { try { $k.DeleteValue($script:ECLIPSE_PROGID, $false) } finally { $k.Close() } } }
+        $k = $hk.OpenSubKey('SOFTWARE\RegisteredApplications', $true); if ($k) { try { $k.DeleteValue('Eclipse', $false) } finally { $k.Close() } }
+    } finally { $hk.Close() }
+}
+
 # La regola di Windows per Google come ricerca (prova del 10/11): sui PC non aziendali Windows la fa ignorare,
 # quindi non si usa piu'. Questa la toglie (installazione e disinstallazione), con "Gestito dalla tua organizzazione".
 $script:ECLIPSE_REG_POL = 'HKLM:\SOFTWARE\Policies\Chromium'

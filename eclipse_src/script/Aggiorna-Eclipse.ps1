@@ -63,6 +63,8 @@ try {
             $l.Save()
         }
     }
+    # la registrazione come browser, con le impostazioni di avvio della versione nuova
+    try { Eclipse-RegistraBrowser } catch { Diario ('registrazione come browser: ' + $_.Exception.Message) }
     $u = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Eclipse by LollozzOS'
     if (Test-Path $u) { Set-ItemProperty -LiteralPath $u -Name DisplayVersion -Value $v.versione }
     Diario "AGGIORNATO a $($v.versione) (Chromium $($v.chromium))"

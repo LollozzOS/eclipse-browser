@@ -7,9 +7,9 @@ Get-Process -Name chrome -ErrorAction SilentlyContinue | Where-Object { $_.Path 
 foreach ($lnk in @((Join-Path ([Environment]::GetFolderPath('CommonDesktopDirectory')) 'Eclipse.lnk'), (Join-Path ([Environment]::GetFolderPath('CommonPrograms')) 'Eclipse.lnk'))) { Remove-Item -LiteralPath $lnk -Force -ErrorAction SilentlyContinue }
 Remove-Item -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Eclipse by LollozzOS' -Recurse -Force -ErrorAction SilentlyContinue
 Unregister-ScheduledTask -TaskName 'Eclipse Aggiornamenti' -TaskPath '\LollozzOS\' -Confirm:$false -ErrorAction SilentlyContinue
-# la regola di Google come ricerca (e con lei "Gestito dalla tua organizzazione")
+# la registrazione come browser e la regola di Google come ricerca (e con lei "Gestito dalla tua organizzazione")
 $com = Join-Path $dir 'Eclipse-Comune.ps1'
-if (Test-Path -LiteralPath $com) { . $com; Eclipse-TogliRicercaGoogle }
+if (Test-Path -LiteralPath $com) { . $com; Eclipse-TogliRicercaGoogle; Eclipse-TogliRegistrazione }
 Set-Location $env:SystemRoot
 Remove-Item -LiteralPath $dir -Recurse -Force -ErrorAction SilentlyContinue
 if (Test-Path -LiteralPath $dir) { Start-Process cmd.exe -ArgumentList ('/c ping 127.0.0.1 -n 4 >nul & rmdir /s /q "{0}"' -f $dir) -WindowStyle Hidden }

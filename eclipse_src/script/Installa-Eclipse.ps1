@@ -109,6 +109,8 @@ foreach ($v in @(@('DisplayName', 'Eclipse by LollozzOS'), @('DisplayVersion', $
 }
 New-ItemProperty -LiteralPath $u -Name 'NoModify' -Value 1 -PropertyType DWord -Force | Out-Null
 Write-Host '  [ok] collegamenti sul desktop e in Start, voce in App installate'
+# Eclipse tra i browser di Windows (App predefinite). Il predefinito lo sceglie il cliente o il Playbook.
+try { Eclipse-RegistraBrowser; Write-Host '  [ok] registrato in Windows come browser' } catch { $avvisi += "registrazione come browser non riuscita: $($_.Exception.Message)" }
 
 # 6) aggiornamenti automatici: un controllo al giorno (e 10 minuti dopo l'accensione), come SYSTEM, in silenzio
 try {
