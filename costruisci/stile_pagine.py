@@ -40,6 +40,9 @@ NOMI = sorted(VALORI, key=len, reverse=True)
 RE = re.compile(r'--(' + '|'.join(re.escape(n) for n in NOMI) + r')(\s*):(\s*)([^;}`"\\]+)')
 
 
+LOGO_SCURO = b'//resources/images/chrome_logo_dark.svg'
+
+
 def dec(v):
     if v[:2] == b'\x1e\x9b': return brotli.decompress(v[8:]), True
     if v[:2] == b'\x1f\x8b': return gzip.decompress(v), True
@@ -52,7 +55,7 @@ def applica(f):
     for rid, v in list(p['res'].items()):
         try: d, compresso = dec(v)
         except Exception: continue
-        if b'--cr-' not in d and b'--google-blue' not in d and b'--md-background' not in d: continue
+        if b'--cr-' not in d and b'--google-blue' not in d and b'--md-background' not in d and LOGO_SCURO not in d: continue
         try: t = d.decode('utf-8')
         except UnicodeDecodeError: continue
         n = [0]
@@ -60,6 +63,9 @@ def applica(f):
             n[0] += 1
             return '--%s%s:%s%s' % (m.group(1), m.group(2), m.group(3), VALORI[m.group(1)])
         t2 = RE.sub(sost, t)
+        # nel modo scuro le pagine mettono il logo grigio di Chromium (un disegno a parte): si usa quello di Eclipse
+        if LOGO_SCURO.decode() in t2:
+            n[0] += t2.count(LOGO_SCURO.decode()); t2 = t2.replace(LOGO_SCURO.decode(), 'chrome://theme/current-channel-logo@2x')
         if n[0]:
             p['res'][rid] = t2.encode('utf-8'); toccate += 1; cambi += n[0]
     pak.scrivi(f, p)

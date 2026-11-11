@@ -36,13 +36,6 @@
   "autofill": {
     "credit_card_enabled": false
   },
-  "extensions": {
-    "settings": {
-      "doeokiglaacbfegkolekpjimdbacepgi": {
-        "ack_ntp_bubble": true
-      }
-    }
-  },
   "bookmark_bar": {
     "show_on_all_tabs": true
   },

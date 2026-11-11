@@ -24,9 +24,6 @@
   "background": {
     "service_worker": "sfondo.js"
   },
-  "chrome_url_overrides": {
-    "newtab": "nuovascheda.html"
-  },
   "action": {
     "default_title": "Eclipse",
     "default_popup": "pannello.html",

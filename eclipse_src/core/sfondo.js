@@ -41,6 +41,17 @@ async function sistemaNuoveSchede() {
     if (NTP_BROWSER.test(u)) { try { await chrome.tabs.update(t.id, { url: nostra }); } catch (e) {} }
   }
 }
+// (11/11) la nuova scheda di Eclipse senza "sostituire" quella del browser: cosi' Chromium non mostra mai la
+// finestra "Forse intendevi modificare la pagina?" (che con "Ripristina" spegneva l'estensione). Ogni scheda che
+// si apre sulla nuova scheda del browser passa subito alla nostra.
+const nostraNtp = () => chrome.runtime.getURL('nuovascheda.html');
+chrome.tabs.onCreated.addListener((t) => {
+  const u = t.pendingUrl || t.url || '';
+  if (NTP_BROWSER.test(u)) chrome.tabs.update(t.id, { url: nostraNtp() }).catch(() => {});
+});
+chrome.tabs.onUpdated.addListener((id, info) => {
+  if (info.url && NTP_BROWSER.test(info.url)) chrome.tabs.update(id, { url: nostraNtp() }).catch(() => {});
+});
 // se si apre poco dopo (l'estensione parte prima delle schede)
 const avvio = Date.now();
 chrome.tabs.onUpdated.addListener((id, info, t) => {
