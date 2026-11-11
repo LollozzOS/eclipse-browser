@@ -95,6 +95,22 @@ $script:ECLIPSE_SPENTE = @('MediaRouter', 'BackForwardCache', 'SpareRendererForS
     'Glic', 'GlicRollout', 'LensOverlay', 'HistoryEmbeddings', 'TabOrganization', 'Compose', 'TextSafetyClassifier',
     'OptimizationGuideOnDeviceModel', 'OnDeviceModelPerformanceParams', 'OptimizationHints', 'AutofillAi',
     'BrowsingTopics', 'InterestGroupStorage', 'Fledge', 'AttributionReportingCrossAppWeb', 'PrivacySandboxAdsAPIsOverride', 'SharedStorageAPI',
+    # (11/11) promozioni, suggerimenti e finestrelle di Chromium: tolte (nomi trovati nel file di Chromium 157)
+    'EnableNtpBrowserPromos', 'IPH_ComposeNewBadgeFeature', 'IPH_DesktopCustomizeChromeAutoOpen',
+    'IPH_DesktopCustomizeChromeExperiment', 'IPH_DownloadEsbPromo', 'IPH_ExtensionsZeroStatePromo',
+    'IPH_FocusHelpBubbleScreenReaderPromo', 'IPH_GlicPromo',
+    'IPH_GlicTrustFirstOnboardingShortcutSnoozePromo', 'IPH_GlicTryIt', 'IPH_LensOverlay',
+    'IPH_MultistepFilterPromo', 'IPH_OmniboxEverywhereLensPromo', 'IPH_PdfGlicSummarizeFeature',
+    'IPH_PriceTrackingEmailConsentFeature', 'IPH_PriceTrackingInSidePanel',
+    'IPH_PriceTrackingPageActionIconLabelFeature', 'IPH_ReadingListDiscovery', 'IPH_ResumptionRail',
+    'IPH_SearchPromotionFeature', 'IPH_SendTabToSelfTutorial', 'IPH_ShoppingCollectionFeature',
+    'IPH_SidePanelLensOverlayPinnableFeature', 'IPH_SidePanelLensOverlayPinnableFollowupFeature',
+    'IPH_SignInBenefits', 'IPH_SignInBenefitsNewSignin', 'IPH_SmartTabSharingDefaultOnFeature',
+    'IPH_SmartTabSharingFeature', 'IPH_SmartTabSharingTryItFeature', 'IPH_SupervisedUserProfileSignin',
+    'IPH_TabGroupsSaveV2Intro', 'IPH_VerticalTabstripTutorialFeature', 'IPH_iOSAddressPromoDesktop',
+    'IPH_iOSEnhancedBrowsingDesktop', 'IPH_iOSLensPromoDesktop', 'IPH_iOSPaymentPromoDesktop',
+    'IPH_iOSPriceTrackingDesktop', 'IPH_iOSTabGroupsDesktop', 'MobileNTPPromoOnDesktop',
+    'MobilePromoOnDesktopForcePromo', 'MobilePromoOnDesktopWithQRCode', 'MobilePromoOnDesktopWithReminder',
     'IgnoreSearchProviderOverrides')
 $script:ECLIPSE_LEGGERO = @('--renderer-process-limit=8', ('--disable-features=' + ($script:ECLIPSE_SPENTE -join ',')), '--enable-features=SideBySide')
 # file del programma che in Eclipse non servono (studiati il 10/11): segnalazione errori a Windows, notifiche a

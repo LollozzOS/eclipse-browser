@@ -31,6 +31,29 @@ for f in glob.glob(os.path.join(V,'Locales','*.pak')):
         p['res'][rid]=t.encode('utf-8'); cambi+=1
     pak.scrivi(f,p)
 print('scritte cambiate:',cambi)
+# 2b) (11/11) scritte "Chrome" del programma diventano "Eclipse": solo le frasi intere elencate qui (il nome vero di
+#     prodotti Google come "Chrome Web Store" resta). Confronto esatto: le frasi lunghe che la contengono non cambiano.
+SCRITTE_CHROME={
+    'Aggiorna Chrome': 'Aggiorna Eclipse',
+    'Chrome non è aggiornato': 'Eclipse non è aggiornato',
+    'Chrome ha reimpostato queste impostazioni': 'Eclipse ha reimpostato queste impostazioni',
+    'Dati di Chrome eliminati': 'Dati di Eclipse eliminati',
+    'Colori di Chrome': 'Colori di Eclipse',
+    'Il tuo profilo Chrome': 'Il tuo profilo Eclipse',
+    'Google Chrome sta cercando di inserire la password su $1.': 'Eclipse sta cercando di inserire la password su $1.',
+}
+cambi_scritte=0
+for f in glob.glob(os.path.join(V,'Locales','*.pak')):
+    p=pak.leggi(f); n=0
+    for rid,val in list(p['res'].items()):
+        try: t=val.decode('utf-8')
+        except UnicodeDecodeError: continue
+        if t in SCRITTE_CHROME:
+            p['res'][rid]=SCRITTE_CHROME[t].encode('utf-8'); n+=1
+    if n: pak.scrivi(f,p)
+    if os.path.basename(f).startswith('it'): cambi_scritte+=n   # le frasi sono in italiano: si contano nel file italiano
+print('scritte Chrome -> Eclipse:',cambi_scritte)
+if cambi_scritte<len(SCRITTE_CHROME): sys.exit('ERRORE: scritte Chrome da cambiare non trovate (%d/%d)'%(cambi_scritte,len(SCRITTE_CHROME)))
 if cambi<500: sys.exit('ERRORE: troppo poche scritte cambiate (%d): il formato e\' cambiato, controllare a mano'%cambi)
 # 3) i loghi di Chromium -> icona Eclipse. Riconosciuti dall'IMPRONTA dell'immagine (impronte.json, fatte sulla 157),
 #    cosi' funziona anche nelle versioni nuove dove i numeri cambiano. Se non li trova tutti: si ferma (meglio niente
