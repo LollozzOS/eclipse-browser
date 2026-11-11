@@ -50,10 +50,13 @@ function Eclipse-Estensioni {
 # (10/11 sera) tolti anche: il processo "di riserva" sempre acceso, le funzioni AI di Chrome (Glic/Gemini, Lens,
 # ricerca nella cronologia con AI, organizza schede, "aiutami a scrivere", modelli AI scaricati) e le API pubblicitarie
 # del "Privacy Sandbox" (Topics, Protected Audience, Attribution, Shared Storage). Nomi che il browser non conosce: ignorati.
+# (11/11) IgnoreSearchProviderOverrides spento: cosi' vale la lista dei motori di ricerca in initial_preferences (Google
+# primo = predefinito sui profili nuovi, senza "Gestito dalla tua organizzazione"). Provato da Lollozz su Windows 11.
 $script:ECLIPSE_SPENTE = @('MediaRouter', 'BackForwardCache', 'SpareRendererForSitePerProcess',
     'Glic', 'GlicRollout', 'LensOverlay', 'HistoryEmbeddings', 'TabOrganization', 'Compose', 'TextSafetyClassifier',
     'OptimizationGuideOnDeviceModel', 'OnDeviceModelPerformanceParams', 'OptimizationHints', 'AutofillAi',
-    'BrowsingTopics', 'InterestGroupStorage', 'Fledge', 'AttributionReportingCrossAppWeb', 'PrivacySandboxAdsAPIsOverride', 'SharedStorageAPI')
+    'BrowsingTopics', 'InterestGroupStorage', 'Fledge', 'AttributionReportingCrossAppWeb', 'PrivacySandboxAdsAPIsOverride', 'SharedStorageAPI',
+    'IgnoreSearchProviderOverrides')
 $script:ECLIPSE_LEGGERO = @('--renderer-process-limit=8', ('--disable-features=' + ($script:ECLIPSE_SPENTE -join ',')), '--enable-features=SideBySide')
 # file del programma che in Eclipse non servono (studiati il 10/11): segnalazione errori a Windows, notifiche a
 # browser chiuso (servirebbe una registrazione che Eclipse non fa), app web con apertura dei file. Solo spazio disco.
