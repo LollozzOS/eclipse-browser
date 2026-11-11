@@ -12,56 +12,52 @@ chrome.runtime.onInstalled.addListener(async () => {
   try { await chrome.privacy.websites.thirdPartyCookiesAllowed.set({ value: !cookie3 }); } catch (e) {}
   await chrome.storage.local.set({ scelteApplicate: Date.now() });
 });
-chrome.runtime.onInstalled.addListener(async () => {
-  const { benvenutoVisto } = await chrome.storage.local.get('benvenutoVisto');
-  if (benvenutoVisto) return;
-  await chrome.storage.local.set({ benvenutoVisto: Date.now() });
-  // le scelte consigliate (si cambiano nel benvenuto, passo "Le tue scelte"): niente cookie che ti seguono tra i siti
-  try { await chrome.privacy.websites.thirdPartyCookiesAllowed.set({ value: false }); } catch (e) {}
-  chrome.tabs.create({ url: chrome.runtime.getURL('benvenuto.html') });
-});
-// All'apertura di Eclipse la prima scheda puo' partire PRIMA che l'estensione sia pronta: in quel caso esce la
-// nuova scheda normale del browser invece di quella di Eclipse. Qui si sostituiscono quelle schede con la nostra.
+// (11/11) Le schede dell'apertura, in un punto solo. Al primo avvio deve restare UNA scheda: il benvenuto di Eclipse.
+// - la pagina "first run" di ungoogled-chromium e la nuova scheda del browser diventano il benvenuto (prima volta)
+//   oppure la nuova scheda di Eclipse; le "first run" in piu' si chiudono (mai l'ultima scheda: si chiuderebbe Eclipse)
+// - la nuova scheda di Eclipse non "sostituisce" quella del browser: cosi' Chromium non mostra la finestra
+//   "Forse intendevi modificare la pagina?" (che con "Ripristina" spegneva l'estensione)
+// Eclipse carica le sue estensioni a ogni apertura e il browser le considera "appena installate" ogni volta:
+// per questo il benvenuto si ricorda in benvenutoVisto.
 const NTP_BROWSER = /^chrome:\/\/(newtab|new-tab-page)\/?($|[?#])/;
-// (11/11) la pagina "first run" di ungoogled-chromium si apre al primo avvio: la chiudiamo (c'e' il benvenuto di Eclipse)
 const PRIMA_PAGINA = /^chrome:\/\/ungoogled-first-run/i;
-// se e' l'unica scheda della finestra non si chiude (si chiuderebbe Eclipse): diventa la nuova scheda di Eclipse
-async function togliPrimaPagina(t) {
+const nostraNtp = () => chrome.runtime.getURL('nuovascheda.html');
+const benvenutoUrl = () => chrome.runtime.getURL('benvenuto.html');
+let daMostrare = false;
+async function sistemaScheda(t) {
+  const u = t.pendingUrl || t.url || '';
+  const prima = PRIMA_PAGINA.test(u);
+  if (!prima && !NTP_BROWSER.test(u)) return;
   try {
-    const nella = await chrome.tabs.query({ windowId: t.windowId });
-    if (nella.length > 1) await chrome.tabs.remove(t.id);
-    else await chrome.tabs.update(t.id, { url: chrome.runtime.getURL('nuovascheda.html') });
+    if (daMostrare) { daMostrare = false; await chrome.tabs.update(t.id, { url: benvenutoUrl() }); return; }
+    if (prima && (await chrome.tabs.query({ windowId: t.windowId })).length > 1) { await chrome.tabs.remove(t.id); return; }
+    await chrome.tabs.update(t.id, { url: nostraNtp() });
   } catch (e) {}
 }
-async function sistemaNuoveSchede() {
-  const nostra = chrome.runtime.getURL('nuovascheda.html');
-  for (const t of await chrome.tabs.query({})) {
-    const u = t.pendingUrl || t.url || '';
-    if (PRIMA_PAGINA.test(u)) { await togliPrimaPagina(t); continue; }
-    if (NTP_BROWSER.test(u)) { try { await chrome.tabs.update(t.id, { url: nostra }); } catch (e) {} }
-  }
-}
-// (11/11) la nuova scheda di Eclipse senza "sostituire" quella del browser: cosi' Chromium non mostra mai la
-// finestra "Forse intendevi modificare la pagina?" (che con "Ripristina" spegneva l'estensione). Ogni scheda che
-// si apre sulla nuova scheda del browser passa subito alla nostra.
-const nostraNtp = () => chrome.runtime.getURL('nuovascheda.html');
-chrome.tabs.onCreated.addListener((t) => {
-  const u = t.pendingUrl || t.url || '';
-  if (NTP_BROWSER.test(u)) chrome.tabs.update(t.id, { url: nostraNtp() }).catch(() => {});
+async function sistemaTutte() { for (const t of await chrome.tabs.query({})) await sistemaScheda(t); }
+chrome.tabs.onCreated.addListener((t) => { sistemaScheda(t); });
+chrome.tabs.onUpdated.addListener((id, info, t) => { if (info.url) sistemaScheda(t); });
+chrome.runtime.onStartup.addListener(sistemaTutte);
+sistemaTutte();
+chrome.runtime.onInstalled.addListener(async () => {
+  const { benvenutoVisto } = await chrome.storage.local.get('benvenutoVisto');
+  if (benvenutoVisto) { sistemaTutte(); return; }
+  await chrome.storage.local.set({ benvenutoVisto: Date.now() });
+  // le scelte consigliate (si cambiano nel benvenuto): niente cookie che ti seguono tra i siti
+  try { await chrome.privacy.websites.thirdPartyCookiesAllowed.set({ value: false }); } catch (e) {}
+  daMostrare = true;
+  await sistemaTutte();
+  // se le schede dell'apertura erano gia' sistemate (o non c'erano): il benvenuto prende il posto della nuova
+  // scheda di Eclipse, oppure si apre in una scheda sua
+  setTimeout(async () => {
+    if (!daMostrare) return;
+    daMostrare = false;
+    const tutte = await chrome.tabs.query({});
+    const ntp = tutte.find((t) => (t.pendingUrl || t.url || '') === nostraNtp());
+    if (ntp) chrome.tabs.update(ntp.id, { url: benvenutoUrl() }).catch(() => {});
+    else if (!tutte.some((t) => (t.pendingUrl || t.url || '') === benvenutoUrl())) chrome.tabs.create({ url: benvenutoUrl() });
+  }, 1500);
 });
-chrome.tabs.onUpdated.addListener((id, info) => {
-  if (info.url && NTP_BROWSER.test(info.url)) chrome.tabs.update(id, { url: nostraNtp() }).catch(() => {});
-});
-// se si apre poco dopo (l'estensione parte prima delle schede)
-const avvio = Date.now();
-chrome.tabs.onUpdated.addListener((id, info, t) => {
-  if (Date.now() - avvio > 60000) return;
-  const u = info.url || t.pendingUrl || t.url || '';
-  if (PRIMA_PAGINA.test(u)) togliPrimaPagina(t);
-});
-chrome.runtime.onStartup.addListener(sistemaNuoveSchede);
-chrome.runtime.onInstalled.addListener(sistemaNuoveSchede);
-sistemaNuoveSchede();
 
 // richieste dalle pagine: aprire le pagine interne del browser (le pagine non possono farlo da sole)
 chrome.runtime.onMessage.addListener((m, _s, rispondi) => {
