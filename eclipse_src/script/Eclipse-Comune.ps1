@@ -84,9 +84,11 @@ function Eclipse-TogliNomeVecchio {
     $vecchio = Join-Path $script:ECLIPSE_DIR 'chrome.exe'
     if ((Test-Path -LiteralPath $script:ECLIPSE_EXE) -and (Test-Path -LiteralPath $vecchio)) { Remove-Item -LiteralPath $vecchio -Force -ErrorAction SilentlyContinue }
 }
-# le estensioni caricate a ogni avvio (Eclipse con Scudo dentro, tema, store di Chrome)
+# le estensioni caricate a ogni avvio (Eclipse, blocco pubblicita', tema, store di Chrome)
+# (15/11) AdGuard (pubblicita' su tutti i siti, YouTube compreso) e NoBreak (Twitch) al posto del blocco di Scudo:
+# arrivano dentro la cartella del programma (Estensioni\adguard, Estensioni\nobreak). Chi non le ha non le carica.
 function Eclipse-Estensioni {
-    @('core', 'tema', 'webstore') | ForEach-Object { Join-Path $script:ECLIPSE_EST $_ } | Where-Object { Test-Path -LiteralPath (Join-Path $_ 'manifest.json') }
+    @('core', 'adguard', 'nobreak', 'tema', 'webstore') | ForEach-Object { Join-Path $script:ECLIPSE_EST $_ } | Where-Object { Test-Path -LiteralPath (Join-Path $_ 'manifest.json') }
 }
 # (10/11 sera) tolti anche: il processo "di riserva" sempre acceso, le funzioni AI di Chrome (Glic/Gemini, Lens,
 # ricerca nella cronologia con AI, organizza schede, "aiutami a scrivere", modelli AI scaricati) e le API pubblicitarie

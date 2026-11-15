@@ -5,7 +5,7 @@ name: Eclipse - nuova versione
 on:
   push:
     branches: [main]
-    paths: ['eclipse_src/**', 'scudo/**', 'costruisci/**', 'pacchetto/**', 'marchio/**', '.github/workflows/**']
+    paths: ['eclipse_src/**', 'scudo/**', 'estensioni/**', 'costruisci/**', 'pacchetto/**', 'marchio/**', '.github/workflows/**']
   schedule:
     - cron: '17 5 * * *'
   workflow_dispatch:
@@ -61,5 +61,5 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "v$V" --repo "$PUBBLICO" --title "Eclipse $V" \
-            --notes "Eclipse by LollozzOS $V - basato su Ungoogled Chromium ${{ steps.v.outputs.tag }} (Chromium, The Chromium Authors, licenza BSD). Aggiornamento automatico." \
+            --notes "Eclipse by LollozzOS $V - basato su Ungoogled Chromium ${{ steps.v.outputs.tag }} (Chromium, The Chromium Authors, licenza BSD). Blocco pubblicita': AdGuard AdBlocker $(jq -r .adguard uscita/versione.json) (Adguard Software Ltd, GPL-3.0, non modificata) e NoBreak per Twitch (T. Eftenov, MIT). Aggiornamento automatico." \
             uscita/*.zip uscita/versione.json

@@ -1,0 +1,14 @@
+Estensioni di altri autori che Eclipse carica a ogni avvio (insieme alla sua, eclipse_src/core).
+
+nobreak/   NoBreak - Ad-free Twitch 0.5.0, di Tsvetan Eftenov (licenza MIT, vedi nobreak/LICENSE.txt)
+           https://github.com/eftenow/twitch-ads-blocker-one-click  (commit 934e85b, 07/10/2026)
+           Motore: VAFT di pixeltris/TwitchAdSolutions (licenza MIT, vedi nobreak/LICENSE-pixeltris-TwitchAdSolutions.txt)
+           Copiata qui tale e quale e controllata il 15/11/2026: lavora solo su twitch.tv.
+           Per aggiornarla: sostituire i file con quelli della versione nuova, dopo averli riletti.
+
+AdGuard    AdGuard AdBlocker (versione per Chrome "MV3"), di Adguard Software Ltd, licenza GPL-3.0.
+           NON sta in questo spazio: costruisci.sh la scarica a ogni versione di Eclipse dalle pubblicazioni
+           ufficiali (https://github.com/AdguardTeam/AdguardBrowserExtension/releases, file chrome-mv3.zip),
+           cosi' i filtri sono sempre quelli dell'ultima versione. Non viene modificata.
+
+Nel pacchetto finiscono in Eclipse\Estensioni\adguard e Eclipse\Estensioni\nobreak.

@@ -1,50 +1,39 @@
-// Eclipse Scudo - la finestrella (clic sull'icona dello scudo)
+// Eclipse - la finestrella (clic sull'icona): blocco pubblicita' (AdGuard, NoBreak), cookie, Libera RAM
 const $ = (id) => document.getElementById(id);
 const demo = new URLSearchParams(location.search).get('demo');
 
-function videoTesto(host) {
-  if (/(^|\.)youtube\.com$/.test(host)) return 'Modulo YouTube attivo: gli annunci vengono tolti prima che parta il video.';
-  if (/(^|\.)twitch\.tv$/.test(host)) return 'Modulo Twitch attivo: durante la pubblicità vedi il live a qualità ridotta, poi torna normale.';
-  return '';
+// (15/11) la pubblicita' la bloccano AdGuard e NoBreak (estensioni a parte): qui si vede se sono accese
+function blocco(id, ids, e, testoSi) {
+  const el = $(id);
+  const acceso = !!(e && e.enabled);
+  el.classList.toggle('no', !acceso);
+  $(ids).textContent = !e ? 'Non trovato in questo Eclipse' : acceso ? testoSi : 'Spento (riaccendilo da Estensioni)';
 }
-
 function mostra(d) {
-  document.body.classList.toggle('spento', !!d.spento);
-  $('host').textContent = d.host || 'Pagina di Eclipse';
-  $('stato').textContent = !d.host ? 'Qui non c\'è niente da bloccare' : d.spento ? 'Spento su questo sito' : 'Protezione attiva';
-  $('int').style.visibility = d.host ? 'visible' : 'hidden';
-  $('tot').textContent = d.pub + d.tra;
-  $('pub').textContent = d.pub;
-  $('tra').textContent = d.tra;
-  const v = videoTesto(d.host || '');
-  $('video').textContent = v;
-  $('video').classList.toggle('si', !!v);
-  $('liste').textContent = d.liste ? 'Liste del ' + d.liste : 'Liste: —';
+  blocco('ag', 'ags', d.adguard, 'Attivo su tutti i siti, YouTube compreso');
+  blocco('nb', 'nbs', d.nobreak, 'Attivo: niente pause pubblicitarie');
+  $('liste').textContent = d.liste ? 'Lista dei cookie del ' + d.liste : 'Lista dei cookie: —';
   $('ver').textContent = 'v' + (d.ver || '');
   $('ban').classList.toggle('off', d.banner === false);
 }
 
 if (demo) {
+  const si = { enabled: true };
   const D = {
-    sito: { host: 'www.ilmeteo.it', pub: 41, tra: 17, liste: '10/11/2026', ver: '1.0.0' },
-    yt: { host: 'www.youtube.com', pub: 9, tra: 6, liste: '10/11/2026', ver: '1.0.0' },
-    tw: { host: 'www.twitch.tv', pub: 5, tra: 11, liste: '10/11/2026', ver: '1.0.0' },
-    spento: { host: 'www.ilmeteo.it', pub: 0, tra: 0, spento: true, liste: '10/11/2026', ver: '1.0.0' },
+    sito: { adguard: si, nobreak: si, liste: '15/11/2026', ver: '2.1.0' },
+    spento: { adguard: { enabled: false }, nobreak: si, liste: '15/11/2026', ver: '2.1.0' },
+    manca: { adguard: null, nobreak: null, liste: '15/11/2026', ver: '2.1.0', banner: false },
   };
   mostra(D[demo] || D.sito);
 } else {
   (async () => {
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    let host = '';
-    try { const u = new URL(tab.url); if (/^https?:$/.test(u.protocol)) host = u.hostname; } catch (e) {}
-    const st = await chrome.runtime.sendMessage({ cosa: 'stato', host, tabId: tab.id });
-    mostra({ host, ...st, ver: chrome.runtime.getManifest().version });
-    $('int').onclick = async () => {
-      const spento = !document.body.classList.contains('spento');
-      await chrome.runtime.sendMessage({ cosa: 'interruttore', host, spento });
-      chrome.tabs.reload(tab.id);
-      window.close();
-    };
+    let tutte = [];
+    try { tutte = await chrome.management.getAll(); } catch (e) {}
+    const trova = (re) => tutte.find((x) => x.type === 'extension' && re.test(x.name)) || null;
+    const adguard = trova(/^AdGuard/i), nobreak = trova(/^NoBreak/i);
+    const st = await chrome.runtime.sendMessage({ cosa: 'stato', host: '', tabId: -1 });
+    mostra({ adguard, nobreak, ...st, ver: chrome.runtime.getManifest().version });
+    $('aga').onclick = () => { if (adguard && adguard.optionsUrl) chrome.tabs.create({ url: adguard.optionsUrl }); window.close(); };
     $('ban').onclick = async () => {
       const acceso = $('ban').classList.contains('off');
       await chrome.runtime.sendMessage({ cosa: 'banner', acceso });
@@ -55,7 +44,7 @@ if (demo) {
       $('agg').textContent = 'Aggiorno…';
       const r = await chrome.runtime.sendMessage({ cosa: 'aggiorna', forza: true });
       $('agg').textContent = r && r.ok ? 'Fatto' : 'Non riuscito';
-      if (r && r.liste) $('liste').textContent = 'Liste del ' + r.liste;
+      if (r && r.liste) $('liste').textContent = 'Lista dei cookie del ' + r.liste;
     };
   })();
 }

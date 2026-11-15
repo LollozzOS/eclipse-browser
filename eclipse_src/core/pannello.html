@@ -17,6 +17,9 @@ body{width:330px;padding:16px;background:#14121c;height:auto}
 .video.si{display:block}.spento .video{display:none}
 .ban{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:12.5px;background:#1b1826;border:1px solid var(--bordo);border-radius:10px;padding:9px 12px}.ban div{flex:1}.ban small{display:block;color:var(--dim);font-size:11px}
 .int.pic{width:36px;height:20px;border-radius:10px}.int.pic::after{top:3px;left:19px;width:14px;height:14px}.int.pic.off{background:#3a3550}.int.pic.off::after{left:3px}
+.blk{margin-top:8px;background:#1b1826;border:1px solid var(--bordo);border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:12px}
+.blk .n{flex:1;min-width:0}.blk .h{font-size:13.5px;font-weight:600}.blk .s{font-size:11.5px;color:var(--acc-chiaro);margin-top:2px}.blk.no .s{color:#d98a8a}
+.blk .apri{background:none;border:1px solid #3a3550;color:#cfcbe0;border-radius:8px;padding:5px 12px;font:inherit;font-size:11.5px;cursor:pointer}.blk.no .apri{display:none}
 .sez{display:flex;align-items:center;gap:8px;margin:16px 0 0;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}.sez img{width:15px}.sez .pal{color:var(--acc-chiaro);font-size:13px}
 .ram{margin-top:8px;background:#1b1826;border:1px solid var(--bordo);border-radius:12px;padding:11px 12px;font-size:12px;color:var(--dim);line-height:1.45}.ram .pri{width:100%;margin-top:10px;padding:9px}
 .piede{display:flex;align-items:center;margin-top:14px;padding-top:10px;border-top:1px solid #221f30;font-size:11.5px;color:var(--dim);gap:8px}
@@ -25,15 +28,13 @@ body{width:330px;padding:16px;background:#14121c;height:auto}
 </style></head><body>
 <div id="tutto">
 <div class="ph"><img src="logo.svg" alt="">Eclipse<span class="v" id="ver"></span></div>
-<div class="sez"><img src="scudo/logo.svg" alt="">Scudo</div>
-<div class="sito"><div class="n"><div class="h" id="host">—</div><div class="s" id="stato">Protezione attiva</div></div><button class="int" id="int" title="Accendi o spegni Scudo su questo sito"></button></div>
-<div class="num"><b id="tot">0</b><span>cose bloccate in questa pagina</span></div>
-<div class="det"><div><b id="pub">0</b>pubblicità</div><div><b id="tra">0</b>traccianti</div></div>
-<div class="video" id="video"></div>
+<div class="sez"><img src="scudo/logo.svg" alt="">Pubblicità</div>
+<div class="blk" id="ag"><div class="n"><div class="h">AdGuard</div><div class="s" id="ags">—</div></div><button class="apri" id="aga">Apri</button></div>
+<div class="blk" id="nb"><div class="n"><div class="h">NoBreak · Twitch</div><div class="s" id="nbs">—</div></div></div>
 <div class="ban"><div>Via le finestre "Accetta i cookie"<small>su tutti i siti</small></div><button class="int pic" id="ban" title="Accendi o spegni"></button></div>
 <div class="sez"><span class="pal">◐</span>Libera RAM</div>
 <div class="ram"><span id="ramtxt">Mette in pausa le schede che non stai guardando: la loro RAM si libera, si ricaricano quando ci torni.</span><button class="pri" id="vai">Metti in pausa le altre schede</button></div>
-<div class="piede"><span id="liste">Liste: —</span><button class="agg" id="agg">Aggiorna ora</button></div>
-<div class="cred">Liste di blocco: EasyList ed EasyPrivacy (easylist.to, CC BY-SA 3.0), uBlock filters (uBlock Origin, GPLv3), AdGuard Cookie Notices (AdGuard, GPLv3). Motore e moduli video: LollozzOS.</div>
+<div class="piede"><span id="liste">Lista dei cookie: —</span><button class="agg" id="agg">Aggiorna ora</button></div>
+<div class="cred">Blocco pubblicità: AdGuard AdBlocker (AdGuard, GPLv3) e NoBreak per Twitch (T. Eftenov, MIT; motore VAFT di pixeltris, MIT). Finestre dei cookie: lista AdGuard Cookie Notices (GPLv3), motore LollozzOS.</div>
 </div>
 <script src="pannello.js"></script></body></html>

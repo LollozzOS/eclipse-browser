@@ -31,5 +31,5 @@ jobs:
           gh release delete prova-strada2 --repo "${{ github.repository }}" --yes --cleanup-tag || true
           gh release create prova-strada2 --repo "${{ github.repository }}" --prerelease --latest=false --target "${{ github.sha }}" \
             --title "PROVA strada 2 (non per i clienti)" \
-            --notes "Pacchetto di prova: eclipse.exe, pagine interne nello stile di Eclipse, pagina first run sostituita. Gli aggiornamenti automatici non lo installano." \
+            --notes "Pacchetto di prova (15/11): blocco pubblicita' con AdGuard e NoBreak per Twitch al posto di Scudo. Gli aggiornamenti automatici non lo installano." \
             uscita/*.zip uscita/versione.json

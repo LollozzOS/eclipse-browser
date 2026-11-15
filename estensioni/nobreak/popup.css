@@ -1,0 +1,174 @@
+:root {
+  color-scheme: light;
+  accent-color: #6d28d9;
+}
+
+body {
+  margin: 0;
+  width: 280px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: #f6f7fb;
+  color: #1a1f36;
+}
+
+.panel {
+  padding: 14px;
+}
+
+h1 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  font-size: 16px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.state,
+.meta {
+  margin: 8px 0;
+  font-size: 12px;
+  color: #42495f;
+}
+
+.state.on {
+  color: #0a6f34;
+}
+
+.state.off {
+  color: #8f1e2f;
+}
+
+.meta.warn {
+  color: #8f1e2f;
+  font-weight: 600;
+}
+
+.meta.ok {
+  color: #0a6f34;
+}
+
+button {
+  width: 100%;
+  margin-top: 10px;
+  border: 0;
+  border-radius: 8px;
+  padding: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  color: #fff;
+  background: #6d28d9;
+}
+
+button:hover {
+  background: #5b21b6;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.stats {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #e3e6ef;
+}
+
+.stats-main {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a1f36;
+}
+
+.stats-sub {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: #42495f;
+}
+
+.banner {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.banner p {
+  margin: 0 0 8px;
+}
+
+.banner.update {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: #fff4d6;
+  border: 1px solid #f0d58a;
+  color: #6b4e00;
+  font-weight: 600;
+}
+
+.banner.star {
+  margin: 12px 0 0;
+  background: #f5f3ff;
+  border: 1px solid #ddd6fe;
+  color: #1a1f36;
+}
+
+.banner-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.banner-actions button {
+  margin-top: 0;
+  padding: 8px;
+}
+
+button.secondary {
+  width: auto;
+  white-space: nowrap;
+  color: #1a1f36;
+  background: #ffffff;
+  border: 1px solid #ddd6fe;
+}
+
+button.secondary:hover {
+  background: #f6f7fb;
+}
+
+button.link {
+  width: auto;
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  color: #6d28d9;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+button.link:hover {
+  background: none;
+  text-decoration: underline;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 12px;
+  font-size: 12px;
+  color: #6b7280;
+}

@@ -54,6 +54,12 @@ try {
     $core = Join-Path $dir 'Estensioni\core'
     & robocopy.exe (Join-Path $p 'core') $core /MIR /XF colore.js /NFL /NDL /NJH /NJS /NP /R:2 /W:2 | Out-Null
     if ($LASTEXITCODE -ge 8) { throw "copia dell'estensione non riuscita" }
+    # (15/11) AdGuard e NoBreak (blocco pubblicita'): arrivano con la cartella del programma; qui si tolgono i file
+    # delle versioni vecchie che la copia normale lascerebbe
+    foreach ($e in @('adguard', 'nobreak')) {
+        $so = Join-Path $p "Eclipse\Estensioni\$e"
+        if (Test-Path -LiteralPath (Join-Path $so 'manifest.json')) { & robocopy.exe $so (Join-Path $dir "Estensioni\$e") /MIR /NFL /NDL /NJH /NJS /NP /R:2 /W:2 | Out-Null }
+    }
     # gli script (e questo stesso, per la prossima volta)
     Copy-Item -Path (Join-Path $p 'script\*.ps1') -Destination $dir -Force
     Copy-Item -LiteralPath (Join-Path $p 'versione.txt') -Destination $dir -Force

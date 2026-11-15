@@ -1,4 +1,4 @@
-// Eclipse: nuova scheda, benvenuto, Libera RAM + Eclipse Scudo (blocco pubblicita') in un solo processo
+// Eclipse: nuova scheda, benvenuto, Libera RAM + finestre dei cookie (Scudo) in un solo processo
 self.window = self;
 importScripts('colore.js', 'scudo/scudo.js');
 
@@ -66,6 +66,17 @@ chrome.runtime.onInstalled.addListener(sistemaTutte);
     chrome.tabs.create({ url: benvenutoUrl() });
   }, 2500);
 })();
+
+// (15/11) AdGuard alla prima apertura apre la sua pagina di ringraziamento: al primo avvio deve restare solo il
+// benvenuto di Eclipse, quindi quella scheda si chiude (mai l'ultima scheda rimasta)
+const GRAZIE_ADGUARD = /^https?:\/\/[a-z0-9.-]*adguard\.(com|info|app)\/.*thankyou\.html/i;
+async function chiudiGrazie(t) {
+  const u = t.pendingUrl || t.url || '';
+  if (!GRAZIE_ADGUARD.test(u)) return;
+  try { if ((await chrome.tabs.query({ windowId: t.windowId })).length > 1) await chrome.tabs.remove(t.id); } catch (e) {}
+}
+chrome.tabs.onCreated.addListener(chiudiGrazie);
+chrome.tabs.onUpdated.addListener((id, info, t) => { if (info.url) chiudiGrazie(t); });
 
 // richieste dalle pagine: aprire le pagine interne del browser (le pagine non possono farlo da sole)
 chrome.runtime.onMessage.addListener((m, _s, rispondi) => {

@@ -69,7 +69,7 @@ function Apri-Pacchetto([string]$f, [string]$dest) {
     }
     Remove-Item -LiteralPath $z, $f -Force -ErrorAction SilentlyContinue
 }
-Write-Host '  [ok] Eclipse Scudo (blocco pubblicita'' e traccianti, YouTube e Twitch)'
+Write-Host ('  [ok] blocco pubblicita'': ' + $(if (Test-Path -LiteralPath (Join-Path $script:ECLIPSE_EST 'adguard\manifest.json')) { 'AdGuard (tutti i siti, YouTube)' } else { 'AdGuard MANCANTE' }) + ' e ' + $(if (Test-Path -LiteralPath (Join-Path $script:ECLIPSE_EST 'nobreak\manifest.json')) { 'NoBreak (Twitch)' } else { 'NoBreak MANCANTE' }))
 try {
     $x = Scarica-Ultima 'NeverDecaf/chromium-web-store' '\.crx$'
     Apri-Pacchetto $x[0] (Join-Path $script:ECLIPSE_EST 'webstore'); Write-Host "  [ok] store di Chrome ($($x[1]))"

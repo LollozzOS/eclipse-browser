@@ -11,7 +11,11 @@ const LISTE = {
 const BASE = { pubblicita: 0, traccianti: 100000, eccezioni: 200000, cookie: 300000 }; // numeri delle regole aggiornate
 const BASE_SITI = 900000;           // regole "spento su questo sito"
 const OGNI_GIORNI = 4;              // le liste cambiano ogni 4 giorni
-const RULESET = ['pubblicita', 'traccianti', 'eccezioni'];
+// (15/11) Lollozz: la pubblicita' la bloccano AdGuard e NoBreak (estensioni a parte, caricate da Eclipse).
+// Scudo resta SOLO per le finestre "Accetta i cookie": niente regole di pubblicita'/traccianti, niente moduli
+// YouTube e Twitch (due blocchi pubblicita' insieme si danno fastidio).
+const SOLO_COOKIE = true;
+const RULESET = SOLO_COOKIE ? [] : ['pubblicita', 'traccianti', 'eccezioni'];
 const ID_ECLIPSE = 'doeokiglaacbfegkolekpjimdbacepgi'; // l'estensione Eclipse (benvenuto: "Le tue scelte")
 
 const KEY = (h) => h.replace(/^www\./, '');
@@ -23,6 +27,7 @@ async function prepara() {
   try { await chrome.declarativeNetRequest.setExtensionActionOptions({ displayActionCountAsBadgeText: true }); } catch (e) {}
   try { await chrome.action.setBadgeBackgroundColor({ color: self.ECLIPSE_COLORE || '#6A00FF' }); } catch (e) {}
   await controllaPacchetto();
+  if (SOLO_COOKIE) await soloCookie();
   await applicaBanner(await leggi('banner', true));
   await registraScript();
   chrome.alarms.create('liste', { periodInMinutes: 360, delayInMinutes: 3 });
@@ -30,6 +35,16 @@ async function prepara() {
 chrome.runtime.onInstalled.addListener(prepara);
 chrome.runtime.onStartup.addListener(prepara);
 chrome.alarms.onAlarm.addListener((a) => { if (a.name === 'liste') aggiorna(false); });
+
+// via quello che le versioni con il blocco pubblicita' avevano lasciato nel profilo (regole scaricate, numeretto)
+async function soloCookie() {
+  try { await chrome.declarativeNetRequest.setExtensionActionOptions({ displayActionCountAsBadgeText: false }); } catch (e) {}
+  try {
+    const via = (await chrome.declarativeNetRequest.getDynamicRules()).filter((r) => r.id < BASE.cookie).map((r) => r.id);
+    if (via.length) await chrome.declarativeNetRequest.updateDynamicRules({ removeRuleIds: via });
+  } catch (e) {}
+  await chrome.storage.local.remove(['cosmetica']);
+}
 
 // se Eclipse e' stato aggiornato con liste piu' nuove di quelle scaricate, si torna a quelle del pacchetto
 async function controllaPacchetto() {
@@ -83,6 +98,17 @@ async function faiAggiorna(forza) {
   const liste = await leggi('liste', null);
   if (!forza && liste && Date.now() - liste.quando < OGNI_GIORNI * 864e5) return { ok: true, liste: liste.data };
   try {
+    if (SOLO_COOKIE) {
+      const c = self.ScudoConverti({ cookie: await scarica('cookie') });
+      const cookie = [...c.rete.cookie, ...c.eccezioni].map((r, i) => ({ ...r, id: BASE.cookie + i + 1 }));
+      if (cookie.length > chrome.declarativeNetRequest.MAX_NUMBER_OF_DYNAMIC_RULES - 1000) throw new Error('troppe regole');
+      const quando = Date.now();
+      const info = { quando, data: new Date(quando).toLocaleDateString('it-IT'), regole: cookie.length, dinamico: true };
+      await chrome.storage.local.set({ cosmeticaCookie: c.cosmetica, regoleCookie: cookie, liste: info });
+      await applicaBanner(await leggi('banner', true));
+      COS = null;
+      return { ok: true, liste: info.data };
+    }
     const testi = { pubblicita: await scarica('pubblicita'), traccianti: await scarica('traccianti') };
     testi.pubblicita += '\n' + await (await fetch('nostre.txt')).text();
     const o = self.ScudoConverti(testi);
@@ -125,6 +151,7 @@ async function registraScript() {
     { id: 'scudo-youtube', js: ['youtube.js'], matches: ['*://*.youtube.com/*', '*://*.youtube-nocookie.com/*'], allFrames: true, runAt: 'document_start', world: 'MAIN' },
     { id: 'scudo-twitch', js: ['twitch.js'], matches: ['*://*.twitch.tv/*'], allFrames: true, runAt: 'document_start', world: 'MAIN' },
   ];
+  if (SOLO_COOKIE) S.length = 1; // solo la parte che nasconde le finestre dei cookie
   for (const s of S) if (escludi.length) s.excludeMatches = escludi;
   try { await chrome.scripting.unregisterContentScripts(); } catch (e) {}
   await chrome.scripting.registerContentScripts(S);
@@ -136,7 +163,8 @@ function prepCos(c) { c.ng = new Set(c.nienteGenerici); c.eg = new Set(c.eccezio
 async function cosmetica() {
   if (COS) return COS;
   const d = await chrome.storage.local.get(['cosmetica', 'cosmeticaCookie']);
-  const main = d.cosmetica || await (await fetch('cosmetica.json')).json();
+  const VUOTA = { nienteGenerici: [], eccezioniGeneriche: [], eccezioniSito: {}, perSito: {}, complessi: [], generici: {} };
+  const main = SOLO_COOKIE ? VUOTA : (d.cosmetica || await (await fetch('cosmetica.json')).json());
   const cook = d.cosmeticaCookie || await (await fetch('cosmetica_cookie.json')).json();
   COS = { main: prepCos(main), cookie: prepCos(cook) };
   return COS;

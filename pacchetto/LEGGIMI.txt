@@ -1,4 +1,4 @@
-﻿ECLIPSE BY LOLLOZZOS - PROTOTIPO (versione 157.0.8103.38, da Ungoogled Chromium)
+ECLIPSE BY LOLLOZZOS - PROTOTIPO (versione 157.0.8103.38, da Ungoogled Chromium)
 ================================================================================
 
 COSA C'E' DENTRO
@@ -12,6 +12,10 @@ COSA C'E' DENTRO
     Dal 10/11: massimo 8 processi per le pagine, niente memoria delle pagine per il tasto Indietro
     (Indietro ricarica la pagina), controllo ortografico spento (profili nuovi).
     Il browser a priorita' bassa durante i giochi lo fa gia' la Modalita' competitiva del Toolbox.
+  - BLOCCO PUBBLICITA' NUOVO (15/11): al posto di Scudo ora ci sono due estensioni gia' dentro e gia' accese:
+    AdGuard (pubblicita' e traccianti su tutti i siti, YouTube compreso) e NoBreak (pause pubblicitarie di Twitch).
+    Si vedono cliccando l'icona di Eclipse in alto. Di Scudo resta solo "Via le finestre Accetta i cookie".
+    Le righe qui sotto che parlano di Scudo valgono per le versioni prima del 15/11.
   - ECLIPSE SCUDO (novita'): il nostro blocco pubblicita' e traccianti. Icona scudo in alto con il
     numero di cose bloccate; clic = finestrella con l'interruttore "spento su questo sito".
     YouTube: toglie gli annunci prima che parta il video, se ne scappa uno lo salta da solo.
